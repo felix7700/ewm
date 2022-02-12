@@ -16,7 +16,7 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final List<String> _categoryNames = ['Milch', 'Brot'];
-  late final Future<Set> categoryNamesSet;
+  late Future<Set<String>> categoryNamesSet;
 
   @override
   void initState() {
@@ -24,13 +24,13 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     print('initState');
     // _dbHelper.initDatabase();
-    loadData();
+    categoryNamesSet = loadData();
   }
 
-  Future<Set> loadData() async {
+  Future<Set<String>> loadData() async {
     var categoryNamesMap =
         await _dbHelper.queryAllRows(tableName: 'category_names');
-    Set _categoryNamesSet = Set<dynamic>();
+    Set<String> _categoryNamesSet = Set<String>();
 
     for (var element in categoryNamesMap) {
       // print(element['category_name']);
@@ -44,10 +44,24 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CategoryList(categoryNames: _categoryNames),
-      // home: FutureBuilder(
-      //   future: categoryNamesSet,
-      // ),
+      // home: CategoryList(categoryNames: _categoryNames),
+      home: FutureBuilder(
+        future: categoryNamesSet,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // return Center(
+            //   child: Text(
+            //     'Daten konnten geladen werden ' + snapshot.data.toString(),
+            //   ),
+            // );
+            return CategoryList(categoryNames: snapshot.data as Set<Object>);
+          } else {
+            return const Center(
+              child: Text('Daten konnten nicht geladen werden'),
+            );
+          }
+        },
+      ),
     );
   }
 }

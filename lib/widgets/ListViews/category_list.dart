@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class CategoryList extends StatelessWidget {
   const CategoryList({required this.categoryNames, Key? key}) : super(key: key);
-  final List<String> categoryNames;
+  final Set<dynamic> categoryNames;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class CategoryList extends StatelessWidget {
                         child: SizedBox(
                           width: 200.0,
                           child: Text(
-                            categoryNames[element],
+                            categoryNames.elementAt(element),
                             style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.center,
                           ),
