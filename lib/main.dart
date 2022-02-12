@@ -1,5 +1,5 @@
 import 'package:ewm/dbhelper.dart';
-import 'package:ewm/widgets/ListViews/category_list.dart';
+import 'package:ewm/widgets/Pages/category_list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
