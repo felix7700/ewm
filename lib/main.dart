@@ -15,29 +15,24 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  final List<String> _categoryNames = ['Milch', 'Brot'];
-  late Future<Set<String>> categoryNamesSet;
+  late Future<Set<String>> _categoryNamesSet;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    print('initState');
-    // _dbHelper.initDatabase();
-    categoryNamesSet = loadData();
+    _categoryNamesSet = loadData();
   }
 
   Future<Set<String>> loadData() async {
     var categoryNamesMap =
         await _dbHelper.queryAllRows(tableName: 'category_names');
-    Set<String> _categoryNamesSet = Set<String>();
+    Set<String> categoryNamesSet = <String>{};
 
     for (var element in categoryNamesMap) {
       // print(element['category_name']);
-      _categoryNamesSet.add(element['category_name']);
+      categoryNamesSet.add(element['category_name']);
     }
-    print('categoryNamesSet = ' + _categoryNamesSet.toString());
-    return _categoryNamesSet;
+    return categoryNamesSet;
   }
 
   @override
@@ -46,20 +41,30 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       // home: CategoryList(categoryNames: _categoryNames),
       home: FutureBuilder(
-        future: categoryNamesSet,
+        future: _categoryNamesSet,
         builder: (context, snapshot) {
+          Widget widget;
           if (snapshot.hasData) {
-            // return Center(
-            //   child: Text(
-            //     'Daten konnten geladen werden ' + snapshot.data.toString(),
-            //   ),
-            // );
-            return CategoryList(categoryNames: snapshot.data as Set<Object>);
+            widget = CategoryList(categoryNames: snapshot.data as Set<Object>);
+          } else if (snapshot.hasError) {
+            widget = const Scaffold(
+                body: Center(
+                    child: Text('Error!',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.red))));
           } else {
-            return const Center(
-              child: Text('Daten konnten nicht geladen werden'),
-            );
+            widget = const Scaffold(
+                backgroundColor: Colors.grey,
+                body: Center(
+                    child: Text('Daten werden geladen...',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.black54))));
           }
+          return widget;
         },
       ),
     );
