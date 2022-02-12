@@ -20,16 +20,15 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    _categoryNamesSet = loadData();
+    _categoryNamesSet = _loadData();
   }
 
-  Future<Set<String>> loadData() async {
+  Future<Set<String>> _loadData() async {
     var categoryNamesMap =
         await _dbHelper.queryAllRows(tableName: 'category_names');
     Set<String> categoryNamesSet = <String>{};
 
     for (var element in categoryNamesMap) {
-      // print(element['category_name']);
       categoryNamesSet.add(element['category_name']);
     }
     return categoryNamesSet;
@@ -39,7 +38,6 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: CategoryList(categoryNames: _categoryNames),
       home: FutureBuilder(
         future: _categoryNamesSet,
         builder: (context, snapshot) {

@@ -12,10 +12,8 @@ class AddButton extends StatelessWidget {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('AlertDialog Title'),
-        content:
-            AddNewItemCard(addItem: (values) => addItem(newItemValues: values)),
-      ),
+          title: const Text('Neue Kategorie'),
+          content: AddNewItemCard(addItemFunction: addItem)),
     );
   }
 
