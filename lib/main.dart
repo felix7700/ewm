@@ -1,3 +1,5 @@
+import 'package:ewm/dbhelper.dart';
+import 'package:ewm/widgets/ListViews/category_list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,87 +14,40 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final List<String> _categoryNames = ['Milch', 'Brot'];
+  late final Future<Set> categoryNamesSet;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print('initState');
+    // _dbHelper.initDatabase();
+    loadData();
+  }
+
+  Future<Set> loadData() async {
+    var categoryNamesMap =
+        await _dbHelper.queryAllRows(tableName: 'category_names');
+    Set _categoryNamesSet = Set<dynamic>();
+
+    for (var element in categoryNamesMap) {
+      // print(element['category_name']);
+      _categoryNamesSet.add(element['category_name']);
+    }
+    print('categoryNamesSet = ' + _categoryNamesSet.toString());
+    return _categoryNamesSet;
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Center(
-            child: Text(
-              'Kategorieen',
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
-          actions: const [
-            AddButton(),
-          ],
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: _categoryNames.length,
-                itemBuilder: (context, int element) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Card(
-                        color: Colors.blue.shade300,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 200.0,
-                            child: Text(
-                              _categoryNames[element],
-                              style: const TextStyle(fontSize: 16),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class AddButton extends StatelessWidget {
-  const AddButton({Key? key}) : super(key: key);
-
-  Future<String?> _showDialog(context) {
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('AlertDialog Title'),
-        content: const Text('AlertDialog description'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'Cancel'),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => _showDialog(context),
-      icon: const Icon(Icons.add),
+      home: CategoryList(categoryNames: _categoryNames),
+      // home: FutureBuilder(
+      //   future: categoryNamesSet,
+      // ),
     );
   }
 }

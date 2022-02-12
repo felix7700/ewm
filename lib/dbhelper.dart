@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/rendering.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,12 +27,12 @@ class DatabaseHelper {
   Future<Database> get database async {
     if (_database != null) return _database!;
     // lazily instantiate the db the first time it is accessed
-    _database = await _initDatabase();
+    _database = await initDatabase();
     return _database!;
   }
 
   // this opens the database (and creates it if it doesn't exist)
-  _initDatabase() async {
+  initDatabase() async {
     print('_initDatabase');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
@@ -44,6 +43,7 @@ class DatabaseHelper {
   // SQL code to create the database table
   Future _onCreate(Database db, int version) async {
     print('_onCreate');
+    return;
     await db.execute('''
           CREATE TABLE $tableInventory (
             $columnItemID INTEGER PRIMARY KEY,
