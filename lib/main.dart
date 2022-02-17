@@ -1,5 +1,5 @@
 import 'package:ewm/dbhelper.dart';
-import 'package:ewm/widgets/Pages/category_list.dart';
+import 'package:ewm/widgets/Pages/category_list_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -43,7 +43,8 @@ class _MainAppState extends State<MainApp> {
         builder: (context, snapshot) {
           Widget widget;
           if (snapshot.hasData) {
-            widget = CategoryList(categoryNames: snapshot.data as Set<Object>);
+            widget =
+                CategoryListPage(categoryNames: snapshot.data as Set<Object>);
           } else if (snapshot.hasError) {
             widget = const Scaffold(
                 body: Center(

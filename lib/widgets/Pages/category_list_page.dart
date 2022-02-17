@@ -1,8 +1,9 @@
-import 'package:ewm/widgets/Buttons/add_button.dart';
+import 'package:ewm/widgets/Buttons/add_category_button.dart';
 import 'package:flutter/material.dart';
 
-class CategoryList extends StatelessWidget {
-  const CategoryList({required this.categoryNames, Key? key}) : super(key: key);
+class CategoryListPage extends StatelessWidget {
+  const CategoryListPage({required this.categoryNames, Key? key})
+      : super(key: key);
   final Set<dynamic> categoryNames;
 
   @override
@@ -16,7 +17,7 @@ class CategoryList extends StatelessWidget {
           ),
         ),
         actions: const [
-          AddButton(),
+          AddCategoryButton(),
         ],
       ),
       body: Column(

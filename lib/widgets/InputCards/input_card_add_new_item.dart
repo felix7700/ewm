@@ -45,6 +45,7 @@ class AddNewItemCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // InputTextFormFieldPrice(priceController: priceController),
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Preis'),
                       controller: priceController,
@@ -59,7 +60,7 @@ class AddNewItemCard extends StatelessWidget {
 
                         return null;
                       },
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -72,8 +73,8 @@ class AddNewItemCard extends StatelessWidget {
                   if (_formKeyTitleInput.currentState!.validate() &&
                       _formKeyPriceInput.currentState!.validate()) {
                     debugPrint('submitData()');
-                    addItemFunction(
-                        [titleController.text, priceController.text]);
+                    addItemFunction(['text1', 'text2']);
+                    // [titleController.text, priceController.text]);
                   }
                   if (_formKeyTitleInput.currentState!.validate() &&
                       _formKeyPriceInput.currentState!.validate()) {

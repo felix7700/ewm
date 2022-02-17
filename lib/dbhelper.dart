@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -33,7 +34,7 @@ class DatabaseHelper {
 
   // this opens the database (and creates it if it doesn't exist)
   initDatabase() async {
-    print('_initDatabase');
+    debugPrint('_initDatabase');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     return await openDatabase(path,
@@ -42,8 +43,9 @@ class DatabaseHelper {
 
   // SQL code to create the database table
   Future _onCreate(Database db, int version) async {
-    print('_onCreate');
+    debugPrint('_onCreate');
     return;
+    /*
     await db.execute('''
           CREATE TABLE $tableInventory (
             $columnItemID INTEGER PRIMARY KEY,
@@ -58,6 +60,7 @@ class DatabaseHelper {
             $columnCategoryName TEXT NOT NULL
           )
           ''');
+          */
   }
 
   void dropTable({required tableName}) async {
@@ -88,7 +91,7 @@ class DatabaseHelper {
   // All of the methods (insert, query, update, delete) can also be done using
   // raw SQL commands. This method uses a raw query to give the row count.
   Future<int?> queryRowCount({required String tableName}) async {
-    print('queryRowCount');
+    debugPrint('queryRowCount');
     Database db = await instance.database;
     return Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(*) FROM $tableName'),
@@ -99,7 +102,7 @@ class DatabaseHelper {
       {required String tableName,
       required String columnName,
       required int value}) async {
-    print('queryItem');
+    debugPrint('queryItem');
     Database db = await instance.database;
     return await db
         .rawQuery('SELECT * FROM $tableName where $columnName = $value');
@@ -127,7 +130,7 @@ class DatabaseHelper {
 
   // Only for Testing!
   void createTable({required String tableName}) async {
-    print('createTable');
+    debugPrint('createTable');
     Database db = await instance.database;
     await db.execute('''
           CREATE TABLE $tableInventory (
