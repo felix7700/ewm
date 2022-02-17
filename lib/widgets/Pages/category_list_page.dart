@@ -1,5 +1,6 @@
-import 'package:ewm/widgets/Buttons/add_category_button.dart';
 import 'package:flutter/material.dart';
+
+import '../AppBarButtons/add_category_button.dart';
 
 class CategoryListPage extends StatelessWidget {
   const CategoryListPage({required this.categoryNames, Key? key})
@@ -30,7 +31,8 @@ class CategoryListPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16.0),
                     child: Card(
-                      color: Colors.blue.shade300,
+                      // ignore: prefer_const_constructors
+                      color: Color.fromARGB(255, 127, 182, 228),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(

@@ -47,6 +47,7 @@ class AddNewCategoryCard extends StatelessWidget {
                     debugPrint('submitData()');
                     addNewCategoryFunction(
                         categoryNameTextEditingController.text);
+                    Navigator.of(context).pop();
                   }
                   if (_formKeyCategoryNameInput.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(

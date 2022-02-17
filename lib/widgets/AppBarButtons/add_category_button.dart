@@ -1,5 +1,5 @@
-import 'package:ewm/widgets/InputCards/input_card_add_new_category.dart';
 import 'package:flutter/material.dart';
+import '../DialogContent/InputCards/input_card_add_new_category.dart';
 
 class AddCategoryButton extends StatelessWidget {
   const AddCategoryButton({Key? key}) : super(key: key);
