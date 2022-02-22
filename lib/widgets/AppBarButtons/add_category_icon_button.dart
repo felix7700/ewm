@@ -1,11 +1,24 @@
+import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
 import '../DialogContent/InputCards/input_card_add_new_category.dart';
 
-class AddCategoryButton extends StatelessWidget {
-  const AddCategoryButton({Key? key}) : super(key: key);
+// ignore: must_be_immutable
+class AddCategoryIconButton extends StatelessWidget {
+  AddCategoryIconButton({required this.refreshItemsFunction, Key? key})
+      : super(key: key);
+
+  DbManager dbManager = DbManager.instance;
+  Function refreshItemsFunction;
 
   void _addCategory(String newCategoryName) {
     debugPrint('Add Category: ' + newCategoryName);
+
+    Map<String, dynamic> row = {'category_name': newCategoryName};
+
+    dbManager.insertIntoTable(
+        tableName: dbManager.tableNameCategories, row: row);
+
+    refreshItemsFunction();
   }
 
   Future<String?> _showDialog(context) {

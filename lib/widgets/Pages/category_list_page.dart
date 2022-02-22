@@ -1,24 +1,45 @@
+import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
+import '../AppBarButtons/add_category_icon_button.dart';
 
-import '../AppBarButtons/add_category_button.dart';
-
+// ignore: must_be_immutable
 class CategoryListPage extends StatelessWidget {
-  const CategoryListPage({required this.categoryNames, Key? key})
+  CategoryListPage(
+      {required this.refreshFunction, required this.categoryNames, Key? key})
       : super(key: key);
   final Set<dynamic> categoryNames;
+  DbManager dbManager = DbManager.instance;
+  Function refreshFunction;
+
+  void _refreshList() {
+    debugPrint('_refreshList()');
+    refreshFunction();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          child: Text(
-            'Kategorieen',
-            style: TextStyle(fontSize: 24),
+            child: Text('Kategorieen', style: TextStyle(fontSize: 24))),
+        actions: [
+          IconButton(
+              onPressed: () {
+                // dbManager.dropTable(tableName: dbManager.tableNameCategories);
+                // dbManager.dropTable(tableName: dbManager.tableNameInventory);
+                var error = dbManager.deleteAllRows(
+                    tableName: dbManager.tableNameCategories);
+                debugPrint('error = ' + error.toString());
+                refreshFunction();
+              },
+              icon: const Icon(Icons.delete_forever)),
+          IconButton(
+              onPressed: () =>
+                  dbManager.onCreate(DbManager.db!, DbManager.databaseVersion),
+              icon: const Icon(Icons.new_label)),
+          AddCategoryIconButton(
+            refreshItemsFunction: _refreshList,
           ),
-        ),
-        actions: const [
-          AddCategoryButton(),
         ],
       ),
       body: Column(

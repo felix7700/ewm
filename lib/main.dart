@@ -1,4 +1,4 @@
-import 'package:ewm/dbhelper.dart';
+import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Pages/category_list_page.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +14,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DbManager dbManager = DbManager.instance;
   late Future<Set<String>> _categoryNamesSet;
 
   @override
@@ -24,14 +24,38 @@ class _MainAppState extends State<MainApp> {
   }
 
   Future<Set<String>> _loadData() async {
-    var categoryNamesMap =
-        await _dbHelper.queryAllRows(tableName: 'category_names');
+    debugPrint('_loadData()');
+    List<Map<String, dynamic>> categoryNamesListMap = [];
+    try {
+      print('try  dbManager.queryAllRows');
+      categoryNamesListMap = await dbManager.queryAllRows(
+          tableName: dbManager.tableNameCategories);
+    } catch (e) {
+      debugPrint('load error e = ' + e.toString());
+      categoryNamesListMap = [];
+    }
     Set<String> categoryNamesSet = <String>{};
 
-    for (var element in categoryNamesMap) {
+    for (var element in categoryNamesListMap) {
       categoryNamesSet.add(element['category_name']);
     }
+
+    if (categoryNamesListMap.toString().contains('no such table')) {
+      debugPrint('error no such table');
+      return {};
+    }
+    debugPrint(
+        'categoryNamesListMap loadet = ' + categoryNamesListMap.toString());
+
+    // 'no such table'
     return categoryNamesSet;
+  }
+
+  void _refreshData() {
+    debugPrint('_refreshData()');
+    setState(() {
+      _categoryNamesSet = _loadData();
+    });
   }
 
   @override
@@ -43,8 +67,10 @@ class _MainAppState extends State<MainApp> {
         builder: (context, snapshot) {
           Widget widget;
           if (snapshot.hasData) {
-            widget =
-                CategoryListPage(categoryNames: snapshot.data as Set<Object>);
+            widget = Scaffold(
+                body: CategoryListPage(
+                    refreshFunction: _refreshData,
+                    categoryNames: snapshot.data as Set<Object>));
           } else if (snapshot.hasError) {
             widget = const Scaffold(
                 body: Center(

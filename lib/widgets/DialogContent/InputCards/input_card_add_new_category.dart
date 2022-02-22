@@ -23,6 +23,7 @@ class AddNewCategoryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
+                      autofocus: true,
                       decoration:
                           const InputDecoration(labelText: 'Kategoriename'),
                       controller: categoryNameTextEditingController,
