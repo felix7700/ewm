@@ -27,7 +27,7 @@ class _MainAppState extends State<MainApp> {
     debugPrint('_loadData()');
     List<Map<String, dynamic>> categoryNamesListMap = [];
     try {
-      print('try  dbManager.queryAllRows');
+      debugPrint('try  dbManager.queryAllRows');
       categoryNamesListMap = await dbManager.queryAllRows(
           tableName: dbManager.tableNameCategories);
     } catch (e) {

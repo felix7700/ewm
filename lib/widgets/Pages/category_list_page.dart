@@ -25,8 +25,12 @@ class CategoryListPage extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                // dbManager.dropTable(tableName: dbManager.tableNameCategories);
-                // dbManager.dropTable(tableName: dbManager.tableNameInventory);
+                dbManager.dropTable(tableName: dbManager.tableNameCategories);
+                dbManager.dropTable(tableName: dbManager.tableNameInventory);
+              },
+              icon: const Icon(Icons.delete)),
+          IconButton(
+              onPressed: () {
                 var error = dbManager.deleteAllRows(
                     tableName: dbManager.tableNameCategories);
                 debugPrint('error = ' + error.toString());

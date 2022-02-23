@@ -70,18 +70,21 @@ class DbManager {
   }
 
   void dropTable({required tableName}) async {
+    debugPrint('\ndropTable');
     Database db = await instance.database;
-    db.execute('DROP TABLE $tableName');
+    db.execute('DROP TABLE IF EXISTS $tableName');
   }
 
   Future<int> insertIntoTable(
       {required String tableName, required Map<String, dynamic> row}) async {
+    debugPrint('queryAllRows');
     Database db = await instance.database;
     return await db.insert(tableName, row);
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(
       {required String tableName}) async {
+    debugPrint('queryAllRows');
     Database db = await instance.database;
     List<Map<String, dynamic>> result;
     try {
@@ -118,6 +121,7 @@ class DbManager {
       {required String tableName,
       required String columnIdName,
       required Map<String, dynamic> rowData}) async {
+    debugPrint('updateRow()');
     Database db = await instance.database;
     int id = rowData[columnIdName];
     return await db.update(tableName, rowData,
@@ -125,16 +129,22 @@ class DbManager {
   }
 
   Future<int> deleteRow({required String tableName, required int id}) async {
+    debugPrint('deleteRow()');
     Database db = await instance.database;
     return await db
         .delete(tableNameInventory, where: '$tableName = ?', whereArgs: [id]);
   }
 
   Future<int> deleteAllRows({required String tableName}) async {
-    debugPrint('deleteAllRows()');
+    debugPrint('\ndeleteAllRows()');
     Database db = await instance.database;
-    return await db.rawDelete(
-        'DELETE FROM $tableNameCategories WHERE $columnNameCategoryID > 0');
+    bool tableExists = await isTableExists(db: db, tableName: tableName);
+    if (tableExists) {
+      return await db.rawDelete(
+          'DELETE FROM $tableNameCategories WHERE $columnNameCategoryID > 0');
+    } else {
+      return -1;
+    }
   }
 
   // Only for Testing!
@@ -149,4 +159,18 @@ class DbManager {
           )
           ''');
   }
+}
+
+Future<bool> isTableExists(
+    {required Database db, required String tableName}) async {
+  debugPrint('isTableExists');
+  String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" +
+      tableName +
+      "'";
+  List<Map<String, Object?>> result = await db.rawQuery(sql);
+  if (result.isNotEmpty) {
+    return true;
+  }
+  //  result.close();
+  return false;
 }
