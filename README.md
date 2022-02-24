@@ -1,6 +1,6 @@
 # ewm
 
-A new Flutter project.
+Sample Flutter project to show different Possibilities how to safe Data in flutter.
 
 ## Getting Started
 
