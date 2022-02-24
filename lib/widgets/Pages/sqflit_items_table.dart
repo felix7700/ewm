@@ -80,3 +80,122 @@ class CategoryListPage extends StatelessWidget {
     );
   }
 }
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  static const String _title = 'Flutter Code Sample';
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: _title,
+      home: Scaffold(
+        appBar: AppBar(title: const Text(_title)),
+        body: MyStatelessWidget(),
+      ),
+    );
+  }
+}
+
+class MyStatelessWidget extends StatefulWidget {
+  const MyStatelessWidget({Key? key}) : super(key: key);
+
+  @override
+  State<MyStatelessWidget> createState() => _MyStatelessWidgetState();
+}
+
+class _MyStatelessWidgetState extends State<MyStatelessWidget> {
+  final Set<String> categorys = {'Käse', 'Butter', 'Milch', 'Brot'};
+  final Set<String> items = {
+    'Gauda',
+    'Markenbutter',
+    'Vollmilch 3,8%',
+    'Körnerbrot'
+  };
+  final List<TableRow> tableRows = [];
+
+  @override
+  void initState() {
+    super.initState();
+    tableRows.add(TableRow(children: [
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.top,
+        child: Container(
+          height: 32,
+          width: 32,
+          color: Color.fromARGB(255, 255, 255, 255),
+          child: const Center(
+            child: Text(
+              'Kategorie',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.top,
+        child: Container(
+          height: 32,
+          width: 32,
+          color: Color.fromARGB(255, 255, 255, 255),
+          child: const Center(
+            child: Text(
+              'Artikel',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      )
+    ]));
+    debugPrint('_MyStatelessWidgetState _initState()');
+    for (String categoryElement in categorys) {
+      tableRows.add(TableRow(children: [
+        TableCell(
+          verticalAlignment: TableCellVerticalAlignment.top,
+          child: Container(
+            height: 32,
+            width: 32,
+            color: Colors.blue[100],
+            child: Center(child: Text(categoryElement)),
+          ),
+        ),
+        TableCell(
+          verticalAlignment: TableCellVerticalAlignment.top,
+          child: Container(
+            height: 32,
+            width: 32,
+            color: Colors.blue[100],
+            child: Center(child: Text(categoryElement)),
+          ),
+        ),
+      ]));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: Table(
+              border: TableBorder.all(),
+              columnWidths: const {
+                0: FractionColumnWidth(0.5),
+                1: FractionColumnWidth(0.5)
+              },
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              children: tableRows,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

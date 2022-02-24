@@ -1,5 +1,5 @@
 import 'package:ewm/db_manager.dart';
-import 'package:ewm/widgets/Pages/category_list_page.dart';
+import 'package:ewm/widgets/Pages/sqflit_items_table.dart';
 import 'package:flutter/material.dart';
 
 void main() {
