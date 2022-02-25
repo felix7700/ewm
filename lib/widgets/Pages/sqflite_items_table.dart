@@ -46,20 +46,20 @@ class _MyStatelessWidgetState extends State<MyStatelessWidget> {
     final List<TableRow> tableRows = [];
 
     const TextStyle _headlineCellsTextStyle = TextStyle(
-        fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold);
+        fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold);
+    const _headlineCellsTextPaddingEdgeInsets = EdgeInsets.all(8.0);
     const TextStyle _cellTextStyle = TextStyle(
-        fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal);
+        fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal);
+    const _cellsTextPaddingEdgeInsets = EdgeInsets.all(16.0);
 
     tableRows.add(
-      TableRow(
+      const TableRow(
         children: [
           TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
-            child: Container(
-              height: 32,
-              width: 32,
-              color: const Color.fromARGB(255, 255, 255, 255),
-              child: const Center(
+            child: Center(
+              child: Padding(
+                padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
                   'Kategorie',
                   style: _headlineCellsTextStyle,
@@ -69,11 +69,9 @@ class _MyStatelessWidgetState extends State<MyStatelessWidget> {
           ),
           TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
-            child: Container(
-              height: 32,
-              width: 32,
-              color: const Color.fromARGB(255, 255, 255, 255),
-              child: const Center(
+            child: Center(
+              child: Padding(
+                padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
                   'Artikel',
                   style: _headlineCellsTextStyle,
@@ -83,11 +81,9 @@ class _MyStatelessWidgetState extends State<MyStatelessWidget> {
           ),
           TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
-            child: Container(
-              height: 32,
-              width: 32,
-              color: const Color.fromARGB(255, 255, 255, 255),
-              child: const Center(
+            child: Center(
+              child: Padding(
+                padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
                   'Stück',
                   style: _headlineCellsTextStyle,
@@ -105,11 +101,9 @@ class _MyStatelessWidgetState extends State<MyStatelessWidget> {
           children: [
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
-              child: Container(
-                height: 32,
-                width: 32,
-                color: Colors.blue[100],
-                child: Center(
+              child: Center(
+                child: Padding(
+                  padding: _cellsTextPaddingEdgeInsets,
                   child: Text(
                     inventoryData[rowIndex]
                         [dbManager.inventoryColumnNameCategoryName],
@@ -120,25 +114,23 @@ class _MyStatelessWidgetState extends State<MyStatelessWidget> {
             ),
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
-              child: Container(
-                height: 32,
-                width: 32,
-                color: Colors.blue[100],
-                child: Center(
-                  child: Text(
-                      inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameItemName],
-                      style: _cellTextStyle),
+              child: Center(
+                child: Expanded(
+                  child: Padding(
+                    padding: _cellsTextPaddingEdgeInsets,
+                    child: Text(
+                        inventoryData[rowIndex]
+                            [dbManager.inventoryColumnNameItemName],
+                        style: _cellTextStyle),
+                  ),
                 ),
               ),
             ),
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
-              child: Container(
-                height: 32,
-                width: 32,
-                color: Colors.blue[100],
-                child: Center(
+              child: Center(
+                child: Padding(
+                  padding: _cellsTextPaddingEdgeInsets,
                   child: Text(
                       inventoryData[rowIndex]
                               [dbManager.inventoryColumnNameItemCount]
