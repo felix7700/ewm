@@ -1,30 +1,16 @@
 import 'package:ewm/db_manager.dart';
+import 'package:ewm/widgets/Buttons/add_category_icon_button.dart';
 import 'package:flutter/material.dart';
 
-class SqfliteItemsTablePage extends StatelessWidget {
+class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
-  static const String _title = 'Flutter Code Sample';
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(_title)),
-        body: const MyStatelessWidget(),
-      ),
-    );
-  }
+  State<SqfliteItemsTablePage> createState() => _SqfliteItemsTablePageState();
 }
 
-class MyStatelessWidget extends StatefulWidget {
-  const MyStatelessWidget({Key? key}) : super(key: key);
-
-  @override
-  State<MyStatelessWidget> createState() => _MyStatelessWidgetState();
-}
-
-class _MyStatelessWidgetState extends State<MyStatelessWidget> {
+class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
+  static const String _title = 'SQFlite Beispiel Lagerhaus';
   DbManager dbManager = DbManager.instance;
   late Future<List<Map<String, dynamic>>> _inventoryData;
 
@@ -32,6 +18,9 @@ class _MyStatelessWidgetState extends State<MyStatelessWidget> {
   void initState() {
     super.initState();
     debugPrint('super.initState();');
+  }
+
+  void _loadData() {
     _inventoryData =
         dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
   }
@@ -148,33 +137,38 @@ class _MyStatelessWidgetState extends State<MyStatelessWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: FutureBuilder(
-          future: _inventoryData,
-          builder: (context, snapshot) {
-            final Widget widget;
-            if (snapshot.hasData) {
-              List<Map<String, dynamic>> _inventoryData =
-                  snapshot.data as List<Map<String, dynamic>>;
-              final List<TableRow> tableRows =
-                  _getTableRows(inventoryData: _inventoryData);
-              widget = Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Table(
-                  children: tableRows,
-                  border: TableBorder.all(),
-                ),
-              );
-            } else {
-              widget = const Center(
-                child: Text('Daten werden geladen...'),
-              );
-            }
-            return widget;
-          },
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(_title),
+      ),
+      body: FutureBuilder(
+        future: _inventoryData,
+        builder: (context, snapshot) {
+          final Widget widget;
+          if (snapshot.hasData) {
+            List<Map<String, dynamic>> _inventoryData =
+                snapshot.data as List<Map<String, dynamic>>;
+            final List<TableRow> tableRows =
+                _getTableRows(inventoryData: _inventoryData);
+            widget = Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Table(
+                    children: tableRows,
+                    border: TableBorder.all(),
+                  ),
+                  AddCategoryIconButton(refreshItemsFunction: _loadData),
+                ],
+              ),
+            );
+          } else {
+            widget = const Center(
+              child: Text('Daten werden geladen...'),
+            );
+          }
+          return widget;
+        },
       ),
     );
   }
