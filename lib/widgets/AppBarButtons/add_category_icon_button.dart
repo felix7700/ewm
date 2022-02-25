@@ -16,7 +16,7 @@ class AddCategoryIconButton extends StatelessWidget {
     Map<String, dynamic> row = {'category_name': newCategoryName};
 
     dbManager.insertIntoTable(
-        tableName: dbManager.tableNameCategories, row: row);
+        tableName: dbManager.categoriesTableName, row: row);
 
     refreshItemsFunction();
   }

@@ -9,19 +9,18 @@ class DbManager {
   static const databaseName = "database.db";
   static const databaseVersion = 1;
 
-  final tableNameInventory = 'inventory';
-  static const columnNameItemID = 'inventory_id';
-  static const columnNameCategoryNumbers = 'inventory_categorie_numbers';
-  static const columnNameItemName = 'inventory_item_name';
-  static const columnNameItemCount = 'inventory_item_count';
+  final String inventoryTableName = 'inventory';
+  final String inventoryColumnNameItemID = 'inventory_id';
+  final String inventoryColumnNameCategoryName = 'inventory_categorie_name';
+  final String inventoryColumnNameItemName = 'inventory_item_name';
+  final String inventoryColumnNameItemCount = 'inventory_item_count';
 
-  final tableNameCategories = 'categories';
-  static const columnNameCategoryID = 'category_id';
-  static const columnNameCategoryName = 'category_name';
+  final categoriesTableName = 'categories';
+  final String categoriesColumnNameCategoryID = 'category_id';
+  final String categoriesColumnNameCategoryName = 'category_name';
 
   DbManager._privateConstructor();
   static final DbManager instance = DbManager._privateConstructor();
-
   static Database? db;
 
   Future<Database> get database async {
@@ -51,20 +50,20 @@ class DbManager {
     debugPrint('_onCreate');
 
     await db.execute('''
-          CREATE TABLE $tableNameInventory (
-            $columnNameItemID INTEGER NOT NULL UNIQUE,
-            $columnNameCategoryNumbers TEXT NOT NULL,
-            $columnNameItemName TEXT NOT NULL,
-            $columnNameItemCount INTEGER NOT NULL,
-            PRIMARY KEY("$columnNameItemID" AUTOINCREMENT)
+          CREATE TABLE $inventoryTableName (
+            $inventoryColumnNameItemID INTEGER NOT NULL UNIQUE,
+            $inventoryColumnNameCategoryName TEXT NOT NULL,
+            $inventoryColumnNameItemName TEXT NOT NULL,
+            $inventoryColumnNameItemCount INTEGER NOT NULL,
+            PRIMARY KEY("$inventoryColumnNameItemID" AUTOINCREMENT)
           )
           ''');
 
     await db.execute('''
-            CREATE TABLE $tableNameCategories (
-              $columnNameCategoryID INTEGER NOT NULL UNIQUE,
-              $columnNameCategoryName TEXT NOT NULL UNIQUE,
-              PRIMARY KEY("$columnNameCategoryID" AUTOINCREMENT)
+            CREATE TABLE $categoriesTableName (
+              $categoriesColumnNameCategoryID INTEGER NOT NULL UNIQUE,
+              $categoriesColumnNameCategoryName TEXT NOT NULL UNIQUE,
+              PRIMARY KEY("$categoriesColumnNameCategoryID" AUTOINCREMENT)
             )
             ''');
   }
@@ -87,6 +86,7 @@ class DbManager {
     debugPrint('queryAllRows');
     Database db = await instance.database;
     List<Map<String, dynamic>> result;
+
     try {
       result = await db.query(tableName);
     } catch (e) {
@@ -132,16 +132,16 @@ class DbManager {
     debugPrint('deleteRow()');
     Database db = await instance.database;
     return await db
-        .delete(tableNameInventory, where: '$tableName = ?', whereArgs: [id]);
+        .delete(inventoryTableName, where: '$tableName = ?', whereArgs: [id]);
   }
 
   Future<int> deleteAllRows({required String tableName}) async {
     debugPrint('\ndeleteAllRows()');
     Database db = await instance.database;
-    bool tableExists = await isTableExists(db: db, tableName: tableName);
+    bool tableExists = await isTableExists(tableName: tableName);
     if (tableExists) {
       return await db.rawDelete(
-          'DELETE FROM $tableNameCategories WHERE $columnNameCategoryID > 0');
+          'DELETE FROM $categoriesTableName WHERE $categoriesColumnNameCategoryID > 0');
     } else {
       return -1;
     }
@@ -152,25 +152,19 @@ class DbManager {
     debugPrint('createTable');
     Database db = await instance.database;
     await db.execute('''
-          CREATE TABLE $tableNameInventory (
+          CREATE TABLE $inventoryTableName (
             $tableName INTEGER PRIMARY KEY,
-            $columnNameCategoryNumbers TEXT NOT NULL,
-            $columnNameItemName INTEGER NOT NULL
+            $inventoryColumnNameCategoryName TEXT NOT NULL,
+            $inventoryColumnNameItemName INTEGER NOT NULL
           )
           ''');
   }
-}
 
-Future<bool> isTableExists(
-    {required Database db, required String tableName}) async {
-  debugPrint('isTableExists');
-  String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" +
-      tableName +
-      "'";
-  List<Map<String, Object?>> result = await db.rawQuery(sql);
-  if (result.isNotEmpty) {
-    return true;
+  isTableExists({required String tableName}) async {
+    debugPrint('isTableExists()');
+    Database db = await instance.database;
+    return Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $tableName'),
+    );
   }
-  //  result.close();
-  return false;
 }
