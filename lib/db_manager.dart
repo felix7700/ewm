@@ -11,8 +11,9 @@ class DbManager {
 
   final String inventoryTableName = 'inventory';
   final String inventoryColumnNameItemID = 'inventory_id';
-  final String inventoryColumnNameCategoryName = 'inventory_categorie_name';
+  final String inventoryColumnNameCategoryName = 'inventory_category_name';
   final String inventoryColumnNameItemName = 'inventory_item_name';
+  final String inventoryColumnNameItemPrice = 'inventory_item_price';
   final String inventoryColumnNameItemCount = 'inventory_item_count';
 
   final categoriesTableName = 'categories';
@@ -28,6 +29,8 @@ class DbManager {
     if (db != null) return db!;
     // lazily instantiate the db the first time it is accessed
     db = await initDatabase();
+    await insertExampleDatesIntoAllTables();
+
     return db!;
   }
 
@@ -36,7 +39,7 @@ class DbManager {
     debugPrint('_initDatabase');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String dbPath = join(documentsDirectory.path, databaseName);
-    debugPrint("dbPath path to see DB in DBBrowser = $dbPath");
+    debugPrint("dbPath to see DB in DBBrowser = $dbPath");
 
     return await openDatabase(dbPath,
         version: databaseVersion, onCreate: onCreate);
@@ -51,6 +54,7 @@ class DbManager {
             $inventoryColumnNameItemID INTEGER NOT NULL UNIQUE,
             $inventoryColumnNameCategoryName TEXT NOT NULL,
             $inventoryColumnNameItemName TEXT NOT NULL,
+            $inventoryColumnNameItemPrice DOUBLE NOT NULL,
             $inventoryColumnNameItemCount INTEGER NOT NULL,
             PRIMARY KEY("$inventoryColumnNameItemID" AUTOINCREMENT)
           )
@@ -65,6 +69,39 @@ class DbManager {
             ''');
   }
 
+  Future insertExampleDatesIntoAllTables() async {
+    debugPrint('insertExampleDatesIntoAllTables()');
+    List<Map<String, dynamic>> _exampleInventoryDates = [
+      {
+        '$inventoryColumnNameItemID': 1,
+        '$inventoryColumnNameCategoryName': 'Butter',
+        '$inventoryColumnNameItemName': 'Deutsche Markenbutter',
+        '$inventoryColumnNameItemPrice': 1.29,
+        '$inventoryColumnNameItemCount': 2
+      },
+      {
+        '$inventoryColumnNameItemID': 2,
+        '$inventoryColumnNameCategoryName': 'Brot',
+        '$inventoryColumnNameItemName': "Weißbrot",
+        '$inventoryColumnNameItemPrice': 0.99,
+        '$inventoryColumnNameItemCount': 4
+      },
+      {
+        '$inventoryColumnNameItemID': 3,
+        '$inventoryColumnNameCategoryName': 'Wein',
+        '$inventoryColumnNameItemName': 'Rotwein',
+        '$inventoryColumnNameItemPrice': 2.99,
+        '$inventoryColumnNameItemCount': 5
+      }
+    ];
+    int _counter = 1;
+    for (Map<String, dynamic> _exampleInventoryData in _exampleInventoryDates) {
+      debugPrint('Durchlauf = ' + _counter.toString());
+      await insertIntoTable(
+          tableName: inventoryTableName, row: _exampleInventoryData);
+    }
+  }
+
   void dropTable({required tableName}) async {
     debugPrint('\ndropTable');
     Database db = await instance.database;
@@ -75,7 +112,12 @@ class DbManager {
       {required String tableName, required Map<String, dynamic> row}) async {
     debugPrint('queryAllRows');
     Database db = await instance.database;
-    return await db.insert(tableName, row);
+    try {
+      return await db.insert(tableName, row);
+    } catch (error) {
+      debugPrint('insertIntoTable errorCode : ' + error.toString());
+      return -1;
+    }
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(

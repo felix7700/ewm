@@ -159,7 +159,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   padding: _cellsTextPaddingEdgeInsets,
                   child: Text(
                       inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameItemCount]
+                              [dbManager.inventoryColumnNameItemPrice]
                           .toString(),
                       style: _cellTextStyle),
                 ),
@@ -198,6 +198,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           if (snapshot.hasData) {
             List<Map<String, dynamic>> _inventoryData =
                 snapshot.data as List<Map<String, dynamic>>;
+            debugPrint('_inventoryData = ' + _inventoryData.toString());
+
             final List<TableRow> tableRows =
                 _getTableRows(inventoryData: _inventoryData);
             widget = Padding(
@@ -209,8 +211,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                     border: TableBorder.all(),
                     columnWidths: const <int, TableColumnWidth>{
                       0: IntrinsicColumnWidth(),
-                      1: IntrinsicColumnWidth(),
-                      2: IntrinsicColumnWidth(),
+                      1: FlexColumnWidth(),
+                      2: FlexColumnWidth(),
                       3: IntrinsicColumnWidth(),
                       4: IntrinsicColumnWidth(),
                     },
