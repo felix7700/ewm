@@ -35,13 +35,10 @@ class DbManager {
   initDatabase() async {
     debugPrint('_initDatabase');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    debugPrint("debugPrint('_initDatabase'); done");
+    String dbPath = join(documentsDirectory.path, databaseName);
+    debugPrint("dbPath path to see DB in DBBrowser = $dbPath");
 
-    String path = join(documentsDirectory.path, databaseName);
-    debugPrint(
-        "String path = join(documentsDirectory.path, databaseName); done");
-
-    return await openDatabase(path,
+    return await openDatabase(dbPath,
         version: databaseVersion, onCreate: onCreate);
   }
 
@@ -93,7 +90,6 @@ class DbManager {
       debugPrint('error! : ' + e.toString());
       result = e as List<Map<String, dynamic>>;
     }
-    debugPrint('result = ' + result.toString());
     return result;
   }
 

@@ -1,7 +1,6 @@
 import 'package:ewm/db_manager.dart';
+import 'package:ewm/widgets/AppBarButtons/add_item_icon_button.dart';
 import 'package:flutter/material.dart';
-
-import '../AppBarButtons/add_category_icon_button.dart';
 
 class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
@@ -23,23 +22,22 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   }
 
   void _loadData() {
-    setState(() {
-      _inventoryData =
-          dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
-    });
+    setState(
+      () {
+        _inventoryData =
+            dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
+      },
+    );
   }
 
   List<TableRow> _getTableRows(
       {required List<Map<String, dynamic>> inventoryData}) {
     debugPrint('\n_getTableRows()');
-    debugPrint('inventoryData = ' + inventoryData.toString());
-    debugPrint('\ninventoryData[] = ' +
-        inventoryData[0][dbManager.inventoryColumnNameCategoryName].toString());
 
     final List<TableRow> tableRows = [];
 
     const TextStyle _headlineCellsTextStyle = TextStyle(
-        fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold);
+        fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold);
     const _headlineCellsTextPaddingEdgeInsets = EdgeInsets.all(8.0);
     const TextStyle _cellTextStyle = TextStyle(
         fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal);
@@ -48,6 +46,18 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     tableRows.add(
       const TableRow(
         children: [
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.top,
+            child: Center(
+              child: Padding(
+                padding: _headlineCellsTextPaddingEdgeInsets,
+                child: Text(
+                  'Item ID',
+                  style: _headlineCellsTextStyle,
+                ),
+              ),
+            ),
+          ),
           TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
             child: Center(
@@ -78,7 +88,19 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Padding(
                 padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
-                  'Stück',
+                  'Stück-\nPreis',
+                  style: _headlineCellsTextStyle,
+                ),
+              ),
+            ),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.top,
+            child: Center(
+              child: Padding(
+                padding: _headlineCellsTextPaddingEdgeInsets,
+                child: Text(
+                  'Bestand\nStückzahl',
                   style: _headlineCellsTextStyle,
                 ),
               ),
@@ -92,6 +114,19 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       tableRows.add(
         TableRow(
           children: [
+            TableCell(
+              verticalAlignment: TableCellVerticalAlignment.top,
+              child: Center(
+                child: Padding(
+                  padding: _cellsTextPaddingEdgeInsets,
+                  child: Text(
+                    inventoryData[rowIndex][dbManager.inventoryColumnNameItemID]
+                        .toString(),
+                    style: _cellTextStyle,
+                  ),
+                ),
+              ),
+            ),
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
               child: Center(
@@ -113,6 +148,19 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   child: Text(
                       inventoryData[rowIndex]
                           [dbManager.inventoryColumnNameItemName],
+                      style: _cellTextStyle),
+                ),
+              ),
+            ),
+            TableCell(
+              verticalAlignment: TableCellVerticalAlignment.top,
+              child: Center(
+                child: Padding(
+                  padding: _cellsTextPaddingEdgeInsets,
+                  child: Text(
+                      inventoryData[rowIndex]
+                              [dbManager.inventoryColumnNameItemCount]
+                          .toString(),
                       style: _cellTextStyle),
                 ),
               ),
@@ -153,14 +201,21 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             final List<TableRow> tableRows =
                 _getTableRows(inventoryData: _inventoryData);
             widget = Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   Table(
                     children: tableRows,
                     border: TableBorder.all(),
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: IntrinsicColumnWidth(),
+                      1: IntrinsicColumnWidth(),
+                      2: IntrinsicColumnWidth(),
+                      3: IntrinsicColumnWidth(),
+                      4: IntrinsicColumnWidth(),
+                    },
                   ),
-                  AddCategoryIconButton(refreshItemsFunction: _loadData),
+                  AddItemIconButton(refreshItemsFunction: _loadData)
                 ],
               ),
             );
