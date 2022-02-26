@@ -1,6 +1,7 @@
 import 'package:ewm/db_manager.dart';
-import 'package:ewm/widgets/Buttons/add_category_icon_button.dart';
 import 'package:flutter/material.dart';
+
+import '../AppBarButtons/add_category_icon_button.dart';
 
 class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
@@ -17,12 +18,15 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   @override
   void initState() {
     super.initState();
-    debugPrint('super.initState();');
+    _inventoryData =
+        dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
   }
 
   void _loadData() {
-    _inventoryData =
-        dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
+    setState(() {
+      _inventoryData =
+          dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
+    });
   }
 
   List<TableRow> _getTableRows(
@@ -104,14 +108,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
               child: Center(
-                child: Expanded(
-                  child: Padding(
-                    padding: _cellsTextPaddingEdgeInsets,
-                    child: Text(
-                        inventoryData[rowIndex]
-                            [dbManager.inventoryColumnNameItemName],
-                        style: _cellTextStyle),
-                  ),
+                child: Padding(
+                  padding: _cellsTextPaddingEdgeInsets,
+                  child: Text(
+                      inventoryData[rowIndex]
+                          [dbManager.inventoryColumnNameItemName],
+                      style: _cellTextStyle),
                 ),
               ),
             ),
