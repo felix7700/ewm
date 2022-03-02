@@ -1,7 +1,7 @@
 import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
-
-import '../Buttons/add_item_icon_button.dart';
+import '../AppBarButtons/add_item_icon_button.dart';
+import '../AppBarButtons/increment_item_count_icon_button.dart';
 
 class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
@@ -29,6 +29,10 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
       },
     );
+  }
+
+  void _incrementItemCount(int id) {
+    debugPrint('_incrementItemCount from id ' + id.toString());
   }
 
   List<TableRow> _getTableRows(
@@ -171,11 +175,20 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Center(
                 child: Padding(
                   padding: _cellsTextPaddingEdgeInsets,
-                  child: Text(
-                      inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameItemCount]
-                          .toString(),
-                      style: _cellTextStyle),
+                  child: Row(
+                    children: [
+                      Text(
+                        inventoryData[rowIndex]
+                                [dbManager.inventoryColumnNameItemCount]
+                            .toString(),
+                        style: _cellTextStyle,
+                      ),
+                      IncrementItemCountIconButton(
+                          itemId: inventoryData[rowIndex]
+                              [dbManager.inventoryColumnNameItemID],
+                          buttonPressed: _incrementItemCount)
+                    ],
+                  ),
                 ),
               ),
             ),

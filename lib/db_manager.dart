@@ -162,8 +162,10 @@ class DbManager {
       required String columnIdName,
       required Map<String, dynamic> rowData}) async {
     debugPrint('updateRow()');
+
     Database db = await instance.database;
     int id = rowData[columnIdName];
+
     return await db.update(tableName, rowData,
         where: '$columnIdName = ?', whereArgs: [id]);
   }

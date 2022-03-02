@@ -12,7 +12,7 @@ class IncrementItemCountIconButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.add_circle_rounded),
       color: Colors.blue,
-      onPressed: () => buttonPressed,
+      onPressed: () => buttonPressed(itemId),
     );
   }
 }
