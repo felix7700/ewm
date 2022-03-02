@@ -39,7 +39,8 @@ class DbManager {
     debugPrint('_initDatabase');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String dbPath = join(documentsDirectory.path, databaseName);
-    debugPrint("dbPath to see DB in DBBrowser = $dbPath");
+    debugPrint(
+        "dbPath to see DB in DBBrowser when using iPhone-Simulator = $dbPath");
 
     return await openDatabase(dbPath,
         version: databaseVersion, onCreate: onCreate);
@@ -70,33 +71,34 @@ class DbManager {
   }
 
   Future insertExampleDatesIntoAllTables() async {
-    debugPrint('insertExampleDatesIntoAllTables()');
+    debugPrint('\ninsertExampleDatesIntoAllTables()');
     List<Map<String, dynamic>> _exampleInventoryDates = [
       {
-        '$inventoryColumnNameItemID': 1,
-        '$inventoryColumnNameCategoryName': 'Butter',
-        '$inventoryColumnNameItemName': 'Deutsche Markenbutter',
-        '$inventoryColumnNameItemPrice': 1.29,
-        '$inventoryColumnNameItemCount': 2
+        inventoryColumnNameItemID: 1,
+        inventoryColumnNameCategoryName: 'Butter',
+        inventoryColumnNameItemName: 'Deutsche Markenbutter',
+        inventoryColumnNameItemPrice: 1.29,
+        inventoryColumnNameItemCount: 2
       },
       {
-        '$inventoryColumnNameItemID': 2,
-        '$inventoryColumnNameCategoryName': 'Brot',
-        '$inventoryColumnNameItemName': "Weißbrot",
-        '$inventoryColumnNameItemPrice': 0.99,
-        '$inventoryColumnNameItemCount': 4
+        inventoryColumnNameItemID: 2,
+        inventoryColumnNameCategoryName: 'Brot',
+        inventoryColumnNameItemName: "Weißbrot",
+        inventoryColumnNameItemPrice: 0.99,
+        inventoryColumnNameItemCount: 4
       },
       {
-        '$inventoryColumnNameItemID': 3,
-        '$inventoryColumnNameCategoryName': 'Wein',
-        '$inventoryColumnNameItemName': 'Rotwein',
-        '$inventoryColumnNameItemPrice': 2.99,
-        '$inventoryColumnNameItemCount': 5
+        inventoryColumnNameItemID: 3,
+        inventoryColumnNameCategoryName: 'Wein',
+        inventoryColumnNameItemName: 'Rotwein',
+        inventoryColumnNameItemPrice: 2.99,
+        inventoryColumnNameItemCount: 5
       }
     ];
-    int _counter = 1;
+    int _counter = 0;
     for (Map<String, dynamic> _exampleInventoryData in _exampleInventoryDates) {
-      debugPrint('Durchlauf = ' + _counter.toString());
+      _counter++;
+      debugPrint('\nDurchlauf: ' + _counter.toString());
       await insertIntoTable(
           tableName: inventoryTableName, row: _exampleInventoryData);
     }

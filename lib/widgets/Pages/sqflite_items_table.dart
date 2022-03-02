@@ -1,6 +1,7 @@
 import 'package:ewm/db_manager.dart';
-import 'package:ewm/widgets/AppBarButtons/add_item_icon_button.dart';
 import 'package:flutter/material.dart';
+
+import '../Buttons/add_item_icon_button.dart';
 
 class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
@@ -41,7 +42,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     const _headlineCellsTextPaddingEdgeInsets = EdgeInsets.all(8.0);
     const TextStyle _cellTextStyle = TextStyle(
         fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal);
-    const _cellsTextPaddingEdgeInsets = EdgeInsets.all(16.0);
+    const _cellsTextPaddingEdgeInsets = EdgeInsets.all(8.0);
 
     tableRows.add(
       const TableRow(
@@ -52,7 +53,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Padding(
                 padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
-                  'Item ID',
+                  'Item-\nID',
                   style: _headlineCellsTextStyle,
                 ),
               ),
@@ -88,7 +89,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Padding(
                 padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
-                  'Stück-\nPreis',
+                  'Stück-\nPreis (€)',
                   style: _headlineCellsTextStyle,
                 ),
               ),
@@ -100,7 +101,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Padding(
                 padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
-                  'Bestand\nStückzahl',
+                  'Bestand\nStück',
                   style: _headlineCellsTextStyle,
                 ),
               ),
@@ -211,7 +212,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                     border: TableBorder.all(),
                     columnWidths: const <int, TableColumnWidth>{
                       0: IntrinsicColumnWidth(),
-                      1: FlexColumnWidth(),
+                      1: IntrinsicColumnWidth(),
                       2: FlexColumnWidth(),
                       3: IntrinsicColumnWidth(),
                       4: IntrinsicColumnWidth(),
