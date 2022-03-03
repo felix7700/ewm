@@ -180,8 +180,10 @@ class DbManager {
   Future<int> deleteAllRows({required String tableName}) async {
     debugPrint('\ndeleteAllRows()');
     Database db = await instance.database;
-    bool tableExists = await isTableExists(tableName: tableName);
-    if (tableExists) {
+    int? tableExists = 0;
+
+    await isTableExists(tableName: tableName);
+    if (tableExists > 0) {
       return await db.rawDelete(
           'DELETE FROM $categoriesTableName WHERE $categoriesColumnNameCategoryID > 0');
     } else {
@@ -202,11 +204,19 @@ class DbManager {
           ''');
   }
 
-  isTableExists({required String tableName}) async {
+  Future<int?> isTableExists({required String tableName}) async {
     debugPrint('isTableExists()');
     Database db = await instance.database;
     return Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(*) FROM $tableName'),
+    );
+  }
+
+  dynamic rawQuery({required String queryString}) async {
+    debugPrint('rawQuery()');
+    Database db = await instance.database;
+    return Sqflite.firstIntValue(
+      await db.rawQuery(queryString),
     );
   }
 }
