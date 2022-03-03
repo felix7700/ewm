@@ -32,7 +32,30 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   }
 
   void _incrementItemCount(dynamic itemData) {
-    debugPrint('_incrementItemCount from id ' + itemData.toString());
+    debugPrint('\n\n\n');
+    debugPrint('_incrementItemCount from itemData ' + itemData.toString());
+
+    // Map _itemData1 = {
+    //   dbManager.inventoryColumnNameItemID: 1,
+    //   dbManager.inventoryColumnNameCategoryName: 'Butter',
+    //   dbManager.inventoryColumnNameItemName: 'Deutsche Markenbutter',
+    //   dbManager.inventoryColumnNameItemPrice: 1.29,
+    //   dbManager.inventoryColumnNameItemCount: 2
+    // };
+    // debugPrint('_itemData1 = ' + _itemData1.toString());
+
+    // _itemData1[dbManager.inventoryColumnNameItemCount]++;
+    // debugPrint('_itemData1 new = ' + _itemData1.toString());
+
+    var itemDataNew = itemData;
+
+    itemDataNew[dbManager.inventoryColumnNameItemCount] =
+        itemDataNew[dbManager.inventoryColumnNameItemCount] + 1;
+    debugPrint('_itamCount = ' + itemDataNew.toString());
+    dbManager.updateRow(
+        tableName: dbManager.inventoryTableName,
+        whereColumnIdName: dbManager.inventoryColumnNameItemID,
+        rowData: itemDataNew);
   }
 
   List<TableRow> _getTableRows(

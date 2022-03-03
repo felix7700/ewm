@@ -159,15 +159,15 @@ class DbManager {
 
   Future<int> updateRow(
       {required String tableName,
-      required String columnIdName,
+      required String whereColumnIdName,
       required Map<String, dynamic> rowData}) async {
     debugPrint('updateRow()');
 
     Database db = await instance.database;
-    int id = rowData[columnIdName];
+    int id = rowData[whereColumnIdName];
 
     return await db.update(tableName, rowData,
-        where: '$columnIdName = ?', whereArgs: [id]);
+        where: '$whereColumnIdName = ?', whereArgs: [id]);
   }
 
   Future<int> deleteRow({required String tableName, required int id}) async {
