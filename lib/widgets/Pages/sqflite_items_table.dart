@@ -1,7 +1,8 @@
 import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
-import '../Buttons/increment_item_count_icon_button.dart';
+import '../Buttons/decrease_item_count_icon_button.dart';
+import '../Buttons/increase_item_count_icon_button.dart';
 
 class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
@@ -31,10 +32,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
-  void _incrementItemCount(int itemId) {
-    debugPrint('\n\n\n');
-    debugPrint('_incrementItemCount from itemData ' + itemId.toString());
-
+  void _increaseItemCount(int itemId) {
     String _table = dbManager.inventoryTableName;
     String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
     String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
@@ -46,10 +44,19 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     _loadData();
   }
 
+  void _decreaseItemCount(int itemId) {
+    String _table = dbManager.inventoryTableName;
+    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease - 1 WHERE $_inventoryColumnNameItemID = $_itemId AND $_columnToIncrease > 0';
+    var result = dbManager.rawQuery(queryString: _queryString);
+    _loadData();
+  }
+
   List<TableRow> _getTableRows(
       {required List<Map<String, dynamic>> inventoryData}) {
-    debugPrint('\n_getTableRows()');
-
     final List<TableRow> tableRows = [];
 
     const TextStyle _headlineCellsTextStyle = TextStyle(
@@ -184,22 +191,29 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
               child: Center(
-                child: Padding(
-                  padding: _cellsTextPaddingEdgeInsets,
-                  child: Row(
-                    children: [
-                      Text(
-                        inventoryData[rowIndex]
-                                [dbManager.inventoryColumnNameItemCount]
-                            .toString(),
-                        style: _cellTextStyle,
-                      ),
-                      IncrementItemCountIconButton(
+                child: Column(
+                  children: [
+                    Text(
+                      inventoryData[rowIndex]
+                              [dbManager.inventoryColumnNameItemCount]
+                          .toString(),
+                      style: _cellTextStyle,
+                    ),
+                    Row(
+                      children: [
+                        DecreaseItemCountIconButton(
                           itemId: inventoryData[rowIndex]
                               [dbManager.inventoryColumnNameItemID],
-                          buttonPressed: _incrementItemCount)
-                    ],
-                  ),
+                          buttonPressed: _decreaseItemCount,
+                        ),
+                        IncreaseItemCountIconButton(
+                          itemId: inventoryData[rowIndex]
+                              [dbManager.inventoryColumnNameItemID],
+                          buttonPressed: _increaseItemCount,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),

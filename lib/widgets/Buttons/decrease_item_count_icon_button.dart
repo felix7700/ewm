@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class IncrementItemCountIconButton extends StatelessWidget {
-  const IncrementItemCountIconButton(
+class DecreaseItemCountIconButton extends StatelessWidget {
+  const DecreaseItemCountIconButton(
       {required this.itemId, required this.buttonPressed, Key? key})
       : super(key: key);
   final Function buttonPressed;
@@ -10,7 +10,7 @@ class IncrementItemCountIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.add_circle_rounded),
+      icon: const Icon(Icons.remove_circle),
       color: Colors.blue,
       onPressed: () => buttonPressed(itemId),
     );
