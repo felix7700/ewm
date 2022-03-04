@@ -240,12 +240,22 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                         DecreaseItemCountIconButton(
                           itemId: inventoryData[rowIndex]
                               [dbManager.inventoryColumnNameItemID],
+                          color: Colors.blue,
                           buttonPressed: _decreaseItemCount,
                         ),
                         IncreaseItemCountIconButton(
                           itemId: inventoryData[rowIndex]
                               [dbManager.inventoryColumnNameItemID],
+                          color: Colors.blue,
                           buttonPressed: _increaseItemCount,
+                        ),
+                        IncreaseItemCountIconButton(
+                          itemId: inventoryData[rowIndex]
+                              [dbManager.inventoryColumnNameItemID],
+                          // ignore: prefer_const_constructors
+                          color: Color.fromARGB(255, 239, 96, 85),
+                          buttonPressed:
+                              _increaseItemCountWithErrorMessageForErrorDemonstation,
                         ),
                       ],
                     ),
