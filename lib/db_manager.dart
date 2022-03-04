@@ -20,22 +20,25 @@ class DbManager {
   final String categoriesColumnNameCategoryID = 'category_id';
   final String categoriesColumnNameCategoryName = 'category_name';
 
+  bool _createExampleTableData = false;
+
   DbManager._privateConstructor();
   static final DbManager instance = DbManager._privateConstructor();
-  static Database? db;
+  static Database? _db;
 
   Future<Database> get database async {
     debugPrint('Future<Database> get database async{}');
-    if (db != null) return db!;
+    if (_db != null) return _db!;
     // lazily instantiate the db the first time it is accessed
-    db = await initDatabase();
-    await insertExampleDatesIntoAllTables();
+    _db = await _initDatabase();
 
-    return db!;
+    if (_createExampleTableData) await insertExampleDataIntoAllTables();
+
+    return _db!;
   }
 
   // this opens the database (and creates it if it doesn't exist)
-  initDatabase() async {
+  _initDatabase() async {
     debugPrint('_initDatabase');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String dbPath = join(documentsDirectory.path, databaseName);
@@ -49,6 +52,7 @@ class DbManager {
   // SQL code to create the database table
   Future onCreate(Database db, int version) async {
     debugPrint('_onCreate');
+    _createExampleTableData = true;
 
     await db.execute('''
           CREATE TABLE $inventoryTableName (
@@ -70,7 +74,7 @@ class DbManager {
             ''');
   }
 
-  Future insertExampleDatesIntoAllTables() async {
+  Future insertExampleDataIntoAllTables() async {
     debugPrint('\ninsertExampleDatesIntoAllTables()');
     List<Map<String, dynamic>> _exampleInventoryDates = [
       {
@@ -212,11 +216,18 @@ class DbManager {
     );
   }
 
-  dynamic rawQuery({required String queryString}) async {
+  Future<List<Map<String, Object?>>> rawQuery(
+      {required String queryString}) async {
     debugPrint('rawQuery()');
     Database db = await instance.database;
-    return Sqflite.firstIntValue(
-      await db.rawQuery(queryString),
-    );
+    List<Map<String, Object?>> _queryResult;
+    try {
+      _queryResult = await db.rawQuery(queryString);
+    } catch (error) {
+      _queryResult = [
+        {'error': error}
+      ];
+    }
+    return _queryResult;
   }
 }

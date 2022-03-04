@@ -32,27 +32,60 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
-  void _increaseItemCount(int itemId) {
+  Future<String?> _showErrorDialog(BuildContext context, String errorText) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Ups! Ein Fehler ist aufgetreten!'),
+        content: Text(errorText),
+      ),
+    );
+  }
+
+  void _increaseItemCountWithErrorMessageForErrorDemonstation(
+      int itemId) async {
+    String _table = dbManager.inventoryTableName;
+    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UUPDATE $_table SET $_columnToIncrease = $_columnToIncrease + 1 WHERE $_inventoryColumnNameItemID = $_itemId';
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
+  }
+
+  void _increaseItemCount(int itemId) async {
     String _table = dbManager.inventoryTableName;
     String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
     String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
     String _itemId = itemId.toString();
     String _queryString =
         'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease + 1 WHERE $_inventoryColumnNameItemID = $_itemId';
-    var result = dbManager.rawQuery(queryString: _queryString);
-    debugPrint('result = ' + result.toString());
-    _loadData();
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
   }
 
-  void _decreaseItemCount(int itemId) {
+  void _decreaseItemCount(int itemId) async {
     String _table = dbManager.inventoryTableName;
     String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
     String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
     String _itemId = itemId.toString();
     String _queryString =
         'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease - 1 WHERE $_inventoryColumnNameItemID = $_itemId AND $_columnToIncrease > 0';
-    var result = dbManager.rawQuery(queryString: _queryString);
-    _loadData();
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
   }
 
   List<TableRow> _getTableRows(
@@ -240,8 +273,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           if (snapshot.hasData) {
             List<Map<String, dynamic>> _inventoryData =
                 snapshot.data as List<Map<String, dynamic>>;
-            debugPrint('_inventoryData = ' + _inventoryData.toString());
-
             final List<TableRow> tableRows =
                 _getTableRows(inventoryData: _inventoryData);
             widget = Padding(
