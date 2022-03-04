@@ -193,11 +193,14 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Center(
                 child: Column(
                   children: [
-                    Text(
-                      inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameItemCount]
-                          .toString(),
-                      style: _cellTextStyle,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        inventoryData[rowIndex]
+                                [dbManager.inventoryColumnNameItemCount]
+                            .toString(),
+                        style: _cellTextStyle,
+                      ),
                     ),
                     Row(
                       children: [
