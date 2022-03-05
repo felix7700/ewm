@@ -1,4 +1,5 @@
 import 'package:ewm/db_manager.dart';
+import 'package:ewm/widgets/Buttons/editI_item_icon_button.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
 import '../Buttons/decrease_item_count_icon_button.dart';
@@ -212,12 +213,23 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               verticalAlignment: TableCellVerticalAlignment.top,
               child: Center(
                 child: Padding(
-                  padding: _cellsTextPaddingEdgeInsets,
-                  child: Text(
-                      inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameItemPrice]
-                          .toString(),
-                      style: _cellTextStyle),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        inventoryData[rowIndex]
+                                [dbManager.inventoryColumnNameItemPrice]
+                            .toString(),
+                        style: _cellTextStyle,
+                      ),
+                      const SizedBox(height: 8),
+                      EditItemIconButton(
+                        itemId: inventoryData[rowIndex]
+                            [dbManager.inventoryColumnNameItemID],
+                        color: Colors.blue,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -235,6 +247,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                         style: _cellTextStyle,
                       ),
                     ),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         DecreaseItemCountIconButton(
@@ -300,7 +313,9 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                       4: IntrinsicColumnWidth(),
                     },
                   ),
-                  AddItemIconButton(refreshItemsFunction: _loadData)
+                  AddItemIconButton(
+                    refreshItemsFunction: _loadData,
+                  ),
                 ],
               ),
             );
