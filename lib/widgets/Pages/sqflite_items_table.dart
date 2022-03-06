@@ -1,5 +1,4 @@
 import 'package:ewm/db_manager.dart';
-import 'package:ewm/widgets/Buttons/editI_item_icon_button.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
 import '../Buttons/decrease_item_count_icon_button.dart';
@@ -39,6 +38,25 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Ups! Ein Fehler ist aufgetreten!'),
         content: Text(errorText),
+      ),
+    );
+  }
+
+  Future<String?> _showEditItemValueDialog(
+      {required BuildContext context,
+      required String title,
+      required int itemId,
+      required String columnName,
+      required String itemValue}) {
+    TextEditingController _textEditingController = TextEditingController();
+    _textEditingController.text = itemValue;
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: TextField(
+          controller: _textEditingController,
+        ),
       ),
     );
   }
@@ -173,9 +191,10 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           children: [
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
-              child: Center(
-                child: Padding(
-                  padding: _cellsTextPaddingEdgeInsets,
+              child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: Center(
                   child: Text(
                     inventoryData[rowIndex][dbManager.inventoryColumnNameItemID]
                         .toString(),
@@ -186,93 +205,55 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             ),
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
-              child: Center(
-                child: Padding(
-                  padding: _cellsTextPaddingEdgeInsets,
-                  child: Text(
+              child: TextButton(
+                onPressed: () {
+                  _showEditItemValueDialog(
+                      context: context,
+                      title: 'Kategorie wählen:',
+                      itemId: inventoryData[rowIndex]
+                          [dbManager.inventoryColumnNameItemID],
+                      columnName: dbManager.inventoryColumnNameCategoryName,
+                      itemValue: inventoryData[rowIndex]
+                          [dbManager.inventoryColumnNameCategoryName]);
+                },
+                child: Text(
+                  inventoryData[rowIndex]
+                      [dbManager.inventoryColumnNameCategoryName],
+                  style: _cellTextStyle,
+                ),
+              ),
+            ),
+            TableCell(
+              verticalAlignment: TableCellVerticalAlignment.top,
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
                     inventoryData[rowIndex]
-                        [dbManager.inventoryColumnNameCategoryName],
-                    style: _cellTextStyle,
-                  ),
+                        [dbManager.inventoryColumnNameItemName],
+                    style: _cellTextStyle),
+              ),
+            ),
+            TableCell(
+              verticalAlignment: TableCellVerticalAlignment.top,
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  inventoryData[rowIndex]
+                          [dbManager.inventoryColumnNameItemPrice]
+                      .toString(),
+                  style: _cellTextStyle,
                 ),
               ),
             ),
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
-              child: Center(
-                child: Padding(
-                  padding: _cellsTextPaddingEdgeInsets,
-                  child: Text(
-                      inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameItemName],
-                      style: _cellTextStyle),
-                ),
-              ),
-            ),
-            TableCell(
-              verticalAlignment: TableCellVerticalAlignment.top,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        inventoryData[rowIndex]
-                                [dbManager.inventoryColumnNameItemPrice]
-                            .toString(),
-                        style: _cellTextStyle,
-                      ),
-                      const SizedBox(height: 8),
-                      EditItemIconButton(
-                        itemId: inventoryData[rowIndex]
-                            [dbManager.inventoryColumnNameItemID],
-                        color: Colors.blue,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            TableCell(
-              verticalAlignment: TableCellVerticalAlignment.top,
-              child: Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        inventoryData[rowIndex]
-                                [dbManager.inventoryColumnNameItemCount]
-                            .toString(),
-                        style: _cellTextStyle,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        DecreaseItemCountIconButton(
-                          itemId: inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameItemID],
-                          color: Colors.blue,
-                          buttonPressed: _decreaseItemCount,
-                        ),
-                        IncreaseItemCountIconButton(
-                          itemId: inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameItemID],
-                          color: Colors.blue,
-                          buttonPressed: _increaseItemCount,
-                        ),
-                        IncreaseItemCountIconButton(
-                          itemId: inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameItemID],
-                          // ignore: prefer_const_constructors
-                          color: Color.fromARGB(255, 239, 96, 85),
-                          buttonPressed:
-                              _increaseItemCountWithErrorMessageForErrorDemonstation,
-                        ),
-                      ],
-                    ),
-                  ],
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  inventoryData[rowIndex]
+                          [dbManager.inventoryColumnNameItemCount]
+                      .toString(),
+                  style: _cellTextStyle,
                 ),
               ),
             ),
@@ -286,6 +267,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(_title),
       ),
