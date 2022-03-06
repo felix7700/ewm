@@ -12,18 +12,25 @@ class SqfliteItemsTablePage extends StatefulWidget {
 class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   static const String _title = 'SQFlite Beispiel Lagerhaus';
   DbManager dbManager = DbManager.instance;
+  late Future<List<Map<String, dynamic>>> _categoriesData;
   late Future<List<Map<String, dynamic>>> _inventoryData;
 
   @override
   void initState() {
+    debugPrint('super.initState();');
     super.initState();
+    _categoriesData =
+        dbManager.queryAllRows(tableName: dbManager.categoriesTableName);
     _inventoryData =
         dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
   }
 
   void _loadData() {
+    debugPrint('_loadData()');
     setState(
       () {
+        _categoriesData =
+            dbManager.queryAllRows(tableName: dbManager.categoriesTableName);
         _inventoryData =
             dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
       },
@@ -56,6 +63,25 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           controller: _textEditingController,
         ),
       ),
+    );
+  }
+
+  Future<String?> _showEditItemValueDialogWithDropDownMenu(
+      {required BuildContext context,
+      required String title,
+      required int itemId,
+      required String columnName,
+      required String itemValue}) {
+    TextEditingController _textEditingController = TextEditingController();
+    _textEditingController.text = itemValue;
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+          title: Text(title),
+          content: TextButton(
+            child: Text(''),
+            onPressed: () {},
+          )),
     );
   }
 
@@ -204,18 +230,19 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               verticalAlignment: TableCellVerticalAlignment.top,
               child: TextButton(
                 onPressed: () {
-                  _showEditItemValueDialog(
+                  _showEditItemValueDialogWithDropDownMenu(
                       context: context,
                       title: 'Kategorie wählen:',
                       itemId: inventoryData[rowIndex]
                           [dbManager.inventoryColumnNameItemID],
-                      columnName: dbManager.inventoryColumnNameCategoryName,
+                      columnName: dbManager.inventoryColumnNameCategoryId,
                       itemValue: inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameCategoryName]);
+                          [dbManager.inventoryColumnNameCategoryId]);
                 },
                 child: Text(
                   inventoryData[rowIndex]
-                      [dbManager.inventoryColumnNameCategoryName],
+                          [dbManager.inventoryColumnNameCategoryId]
+                      .toString(),
                   style: _cellTextStyle,
                 ),
               ),
@@ -275,6 +302,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           if (snapshot.hasData) {
             List<Map<String, dynamic>> _inventoryData =
                 snapshot.data as List<Map<String, dynamic>>;
+            debugPrint('_inventoryData: ' + _inventoryData.toString());
             final List<TableRow> tableRows =
                 _getTableRows(inventoryData: _inventoryData);
             widget = Padding(
