@@ -10,7 +10,7 @@ class DbManager {
 
   final String inventoryTableName = 'inventory';
   final String inventoryColumnNameItemID = 'inventory_id';
-  final String inventoryColumnNameCategoryName = 'inventory_category_name';
+  final String inventoryColumnNameCategoryId = 'inventory_category_id';
   final String inventoryColumnNameItemName = 'inventory_item_name';
   final String inventoryColumnNameItemPrice = 'inventory_item_price';
   final String inventoryColumnNameItemCount = 'inventory_item_count';
@@ -58,7 +58,7 @@ class DbManager {
     await db.execute('''
           CREATE TABLE $inventoryTableName (
             $inventoryColumnNameItemID INTEGER NOT NULL UNIQUE,
-            $inventoryColumnNameCategoryName TEXT NOT NULL,
+            $inventoryColumnNameCategoryId INTEGER NOT NULL,
             $inventoryColumnNameItemName TEXT NOT NULL,
             $inventoryColumnNameItemPrice DOUBLE NOT NULL,
             $inventoryColumnNameItemCount INTEGER NOT NULL,
@@ -107,21 +107,21 @@ class DbManager {
     List<Map<String, dynamic>> _exampleData = [
       {
         inventoryColumnNameItemID: 1,
-        inventoryColumnNameCategoryName: 'Butter',
+        inventoryColumnNameCategoryId: 1,
         inventoryColumnNameItemName: 'Deutsche Markenbutter',
         inventoryColumnNameItemPrice: 1.29,
         inventoryColumnNameItemCount: 2
       },
       {
         inventoryColumnNameItemID: 2,
-        inventoryColumnNameCategoryName: 'Brot',
+        inventoryColumnNameCategoryId: 2,
         inventoryColumnNameItemName: "Weißbrot",
         inventoryColumnNameItemPrice: 0.99,
         inventoryColumnNameItemCount: 4
       },
       {
         inventoryColumnNameItemID: 3,
-        inventoryColumnNameCategoryName: 'Wein',
+        inventoryColumnNameCategoryId: 3,
         inventoryColumnNameItemName: 'Rotwein',
         inventoryColumnNameItemPrice: 2.99,
         inventoryColumnNameItemCount: 5
@@ -226,7 +226,7 @@ class DbManager {
     await db.execute('''
           CREATE TABLE $inventoryTableName (
             $tableName INTEGER PRIMARY KEY,
-            $inventoryColumnNameCategoryName TEXT NOT NULL,
+            $inventoryColumnNameCategoryId TEXT NOT NULL,
             $inventoryColumnNameItemName INTEGER NOT NULL
           )
           ''');
