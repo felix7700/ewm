@@ -1,8 +1,6 @@
 import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
-import '../Buttons/decrease_item_count_icon_button.dart';
-import '../Buttons/increase_item_count_icon_button.dart';
 
 class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
@@ -116,7 +114,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     const _headlineCellsTextPaddingEdgeInsets = EdgeInsets.all(8.0);
     const TextStyle _cellTextStyle = TextStyle(
         fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal);
-    const _cellsTextPaddingEdgeInsets = EdgeInsets.all(8.0);
 
     tableRows.add(
       const TableRow(

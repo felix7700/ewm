@@ -31,7 +31,9 @@ class DbManager {
     // lazily instantiate the db the first time it is accessed
     _db = await _initDatabase();
 
-    if (_createExampleTableData) await insertExampleDataIntoAllTables();
+    if (_createExampleTableData) {
+      await _insertExampleDataIntoAllTables();
+    }
 
     return _db!;
   }
@@ -73,9 +75,36 @@ class DbManager {
             ''');
   }
 
-  Future insertExampleDataIntoAllTables() async {
+  Future _insertExampleDataIntoAllTables() async {
     debugPrint('\ninsertExampleDatesIntoAllTables()');
-    List<Map<String, dynamic>> _exampleInventoryDates = [
+    await _insertExampleDataIntoCategoriesTable();
+    await _insertExampleDataIntoInventoryTable();
+  }
+
+  Future _insertExampleDataIntoCategoriesTable() async {
+    debugPrint('_insertExampleDataIntoColumnTable()');
+    List<Map<String, dynamic>> _exampleData = [
+      {
+        categoriesColumnNameCategoryID: 1,
+        categoriesColumnNameCategoryName: 'Butter',
+      },
+      {
+        categoriesColumnNameCategoryID: 2,
+        categoriesColumnNameCategoryName: 'Brot',
+      },
+      {
+        categoriesColumnNameCategoryID: 3,
+        categoriesColumnNameCategoryName: 'Wein',
+      }
+    ];
+    for (Map<String, dynamic> _dataRow in _exampleData) {
+      await insertIntoTable(tableName: categoriesTableName, row: _dataRow);
+    }
+  }
+
+  Future _insertExampleDataIntoInventoryTable() async {
+    debugPrint('_insertExampleDataIntoInventoryTable()');
+    List<Map<String, dynamic>> _exampleData = [
       {
         inventoryColumnNameItemID: 1,
         inventoryColumnNameCategoryName: 'Butter',
@@ -98,12 +127,8 @@ class DbManager {
         inventoryColumnNameItemCount: 5
       }
     ];
-    int _counter = 0;
-    for (Map<String, dynamic> _exampleInventoryData in _exampleInventoryDates) {
-      _counter++;
-      debugPrint('\nDurchlauf: ' + _counter.toString());
-      await insertIntoTable(
-          tableName: inventoryTableName, row: _exampleInventoryData);
+    for (Map<String, dynamic> _dataRow in _exampleData) {
+      await insertIntoTable(tableName: inventoryTableName, row: _dataRow);
     }
   }
 
