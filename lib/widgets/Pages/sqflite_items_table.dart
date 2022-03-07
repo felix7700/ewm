@@ -14,15 +14,15 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   DbManager dbManager = DbManager.instance;
   late Future<List<Map<String, dynamic>>> _categoriesData;
   late Future<List<Map<String, dynamic>>> _inventoryData;
+  late Future<List<List<Map<String, dynamic>>>> _allData;
 
   @override
   void initState() {
     debugPrint('super.initState();');
     super.initState();
-    _categoriesData =
-        dbManager.queryAllRows(tableName: dbManager.categoriesTableName);
-    _inventoryData =
-        dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
+    // _inventoryData =
+    //     dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
+    _allData = dbManager.queryAllRowsFromAllTables();
   }
 
   void _loadData() {
@@ -132,7 +132,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   }
 
   List<TableRow> _getTableRows(
-      {required List<Map<String, dynamic>> inventoryData}) {
+      {required List<Map<String, dynamic>> categoriesData,
+      required List<Map<String, dynamic>> inventoryData}) {
     final List<TableRow> tableRows = [];
 
     const TextStyle _headlineCellsTextStyle = TextStyle(
@@ -237,12 +238,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                           [dbManager.inventoryColumnNameItemID],
                       columnName: dbManager.inventoryColumnNameCategoryId,
                       itemValue: inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameCategoryId]);
+                              [dbManager.inventoryColumnNameCategoryId]
+                          .toString());
                 },
                 child: Text(
-                  inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameCategoryId]
-                      .toString(),
+                  categoriesData[rowIndex]
+                      [dbManager.categoriesColumnNameCategoryName],
                   style: _cellTextStyle,
                 ),
               ),
@@ -296,15 +297,20 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
         title: const Text(_title),
       ),
       body: FutureBuilder(
-        future: _inventoryData,
+        future: _allData,
         builder: (context, snapshot) {
           final Widget widget;
           if (snapshot.hasData) {
+            List<List<Map<String, dynamic>>> _allDataFromAllTables =
+                snapshot.data as List<List<Map<String, dynamic>>>;
+            List<Map<String, dynamic>> _categoriesData =
+                _allDataFromAllTables[0];
             List<Map<String, dynamic>> _inventoryData =
-                snapshot.data as List<Map<String, dynamic>>;
+                _allDataFromAllTables[1];
+            debugPrint('_categoriesData: ' + _categoriesData.toString());
             debugPrint('_inventoryData: ' + _inventoryData.toString());
-            final List<TableRow> tableRows =
-                _getTableRows(inventoryData: _inventoryData);
+            final List<TableRow> tableRows = _getTableRows(
+                categoriesData: _categoriesData, inventoryData: _inventoryData);
             widget = Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(

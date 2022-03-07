@@ -165,6 +165,27 @@ class DbManager {
     return result;
   }
 
+  Future<List<List<Map<String, dynamic>>>> queryAllRowsFromAllTables() async {
+    debugPrint('queryAllRows');
+    Database db = await instance.database;
+
+    List<Map<String, dynamic>> resultTable1;
+    try {
+      resultTable1 = await db.query(categoriesTableName);
+    } catch (e) {
+      debugPrint('error! : ' + e.toString());
+      resultTable1 = e as List<Map<String, dynamic>>;
+    }
+    List<Map<String, dynamic>> resultTable2;
+    try {
+      resultTable2 = await db.query(inventoryTableName);
+    } catch (e) {
+      debugPrint('error! : ' + e.toString());
+      resultTable2 = e as List<Map<String, dynamic>>;
+    }
+    return [resultTable1, resultTable2];
+  }
+
   // All of the methods (insert, query, update, delete) can also be done using
   // raw SQL commands. This method uses a raw query to give the row count.
   Future<int?> queryRowCount({required String tableName}) async {
