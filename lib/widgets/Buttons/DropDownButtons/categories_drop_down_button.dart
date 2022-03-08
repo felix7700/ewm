@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CategoriesDropDownButton extends StatefulWidget {
-  CategoriesDropDownButton({required this.dropdownValue, Key? key})
+  CategoriesDropDownButton(
+      {required this.updateCategoryIdInItemData,
+      required this.categoriesFromDBasList,
+      required this.dropdownValue,
+      Key? key})
       : super(key: key);
-  String dropdownValue;
+  String? dropdownValue;
+  List<String> categoriesFromDBasList = [];
+  Function updateCategoryIdInItemData;
 
   @override
   State<CategoriesDropDownButton> createState() =>
@@ -11,9 +17,11 @@ class CategoriesDropDownButton extends StatefulWidget {
 }
 
 class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
+  final String _dropDownValue = 'Brot';
+  int _index = 0;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -31,11 +39,12 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
       onChanged: (String? newValue) {
         setState(() {
           widget.dropdownValue = newValue!;
+          _index = widget.categoriesFromDBasList.indexOf(newValue);
         });
       },
-      items: <String>['One', 'Two', 'Free', 'Four']
+      items: widget.categoriesFromDBasList
           .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
+        return DropdownMenuItem(
           value: value,
           child: Text(value),
         );

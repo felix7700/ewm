@@ -1,4 +1,5 @@
 import 'package:ewm/db_manager.dart';
+import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
 
@@ -66,23 +67,68 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
-  Future<String?> _showEditItemValueDialogWithDropDownMenu(
-      {required BuildContext context,
-      required String title,
-      required int itemId,
-      required String columnName,
-      required String itemValue}) {
-    TextEditingController _textEditingController = TextEditingController();
-    _textEditingController.text = itemValue;
+  Future<String?> _showEditItemCategoryDialog({
+    required BuildContext context,
+    required String title,
+    required Map<String, dynamic> itemData,
+    required String columnName,
+    required List<Map<String, dynamic>> categories,
+  }) {
+    String dropdownInitValue =
+        categories[0][dbManager.categoriesColumnNameCategoryName];
+    TextEditingController _categoryTextEditingController =
+        TextEditingController();
+    _categoryTextEditingController.text = dropdownInitValue;
+    List<String> _categoriesAsList = [];
+    for (int i = 0; i < categories.length; i++) {
+      _categoriesAsList.add(
+          categories[i][dbManager.categoriesColumnNameCategoryName].toString());
+    }
+
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-          title: Text(title),
-          content: TextButton(
-            child: Text(''),
-            onPressed: () {},
-          )),
+        title: Text(title),
+        content: Row(
+          children: [
+            TextButton(
+              child: Row(
+                children: [
+                  CategoriesDropDownButton(
+                    updateCategoryIdInItemData: _updateCategoryIdInItemData,
+                    categoriesFromDBasList: _categoriesAsList,
+                    dropdownValue: dropdownInitValue,
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  IconButton(
+                    iconSize: 32,
+                    color: Colors.deepPurpleAccent,
+                    icon: const Icon(Icons.check),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+              onPressed: () {},
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+          ],
+        ),
+      ),
     );
+  }
+
+  void _updateCategoryIdInItemData(Map<String, dynamic> itemData) async {
+    await dbManager.updateRow(
+        tableName: dbManager.inventoryTableName,
+        whereColumnIdName: dbManager.inventoryColumnNameItemID,
+        rowData: itemData);
+    _loadData();
   }
 
   void _increaseItemCountWithErrorMessageForErrorDemonstation(
@@ -231,15 +277,13 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               verticalAlignment: TableCellVerticalAlignment.top,
               child: TextButton(
                 onPressed: () {
-                  _showEditItemValueDialogWithDropDownMenu(
-                      context: context,
-                      title: 'Kategorie wählen:',
-                      itemId: inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameItemID],
-                      columnName: dbManager.inventoryColumnNameCategoryId,
-                      itemValue: inventoryData[rowIndex]
-                              [dbManager.inventoryColumnNameCategoryId]
-                          .toString());
+                  _showEditItemCategoryDialog(
+                    categories: categoriesData,
+                    context: context,
+                    title: 'Kategorie wählen:',
+                    itemData: inventoryData[rowIndex],
+                    columnName: dbManager.inventoryColumnNameCategoryId,
+                  );
                 },
                 child: Text(
                   categoriesData[rowIndex]
@@ -307,8 +351,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                 _allDataFromAllTables[0];
             List<Map<String, dynamic>> _inventoryData =
                 _allDataFromAllTables[1];
-            debugPrint('_categoriesData: ' + _categoriesData.toString());
-            debugPrint('_inventoryData: ' + _inventoryData.toString());
             final List<TableRow> tableRows = _getTableRows(
                 categoriesData: _categoriesData, inventoryData: _inventoryData);
             widget = Padding(
