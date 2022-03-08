@@ -21,12 +21,10 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   void initState() {
     debugPrint('super.initState();');
     super.initState();
-    // _inventoryData =
-    //     dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
     _allData = dbManager.queryAllRowsFromAllTables();
   }
 
-  void _loadData() {
+  void _loadData() async {
     debugPrint('_loadData()');
     setState(
       () {
@@ -95,7 +93,9 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Row(
                 children: [
                   CategoriesDropDownButton(
-                    updateCategoryIdInItemData: _updateCategoryIdInItemData,
+                    itemData: itemData,
+                    updateCategoryIdInItemDataFunction:
+                        _updateCategoryIdInItemData,
                     categoriesFromDBasList: _categoriesAsList,
                     dropdownValue: dropdownInitValue,
                   ),
@@ -123,12 +123,23 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
-  void _updateCategoryIdInItemData(Map<String, dynamic> itemData) async {
-    await dbManager.updateRow(
-        tableName: dbManager.inventoryTableName,
-        whereColumnIdName: dbManager.inventoryColumnNameItemID,
-        rowData: itemData);
-    _loadData();
+  void _updateCategoryIdInItemData(
+      {required int itemId, required int newCategoryId}) async {
+    debugPrint('_updateCategoryIdInItemData');
+    String _table = dbManager.inventoryTableName;
+    String _columnToUpdate = dbManager.inventoryColumnNameCategoryId;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UPDATE $_table SET $_columnToUpdate = $newCategoryId WHERE $_inventoryColumnNameItemID = $_itemId';
+    debugPrint('_queryString : ' + _queryString);
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData(); // ToDo: _loadData needs to await data! this is the reason no why new values not displayed
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
+    debugPrint('_resultErrorList : ' + _resultErrorList.toString());
   }
 
   void _increaseItemCountWithErrorMessageForErrorDemonstation(
@@ -286,7 +297,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   );
                 },
                 child: Text(
-                  categoriesData[rowIndex]
+                  categoriesData[inventoryData[rowIndex]
+                          [dbManager.inventoryColumnNameCategoryId]]
                       [dbManager.categoriesColumnNameCategoryName],
                   style: _cellTextStyle,
                 ),

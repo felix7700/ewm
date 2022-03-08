@@ -1,15 +1,18 @@
+import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
 
 class CategoriesDropDownButton extends StatefulWidget {
   CategoriesDropDownButton(
-      {required this.updateCategoryIdInItemData,
+      {required this.itemData,
+      required this.updateCategoryIdInItemDataFunction,
       required this.categoriesFromDBasList,
       required this.dropdownValue,
       Key? key})
       : super(key: key);
   String? dropdownValue;
   List<String> categoriesFromDBasList = [];
-  Function updateCategoryIdInItemData;
+  Map<String, dynamic> itemData;
+  Function updateCategoryIdInItemDataFunction;
 
   @override
   State<CategoriesDropDownButton> createState() =>
@@ -17,8 +20,8 @@ class CategoriesDropDownButton extends StatefulWidget {
 }
 
 class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
-  final String _dropDownValue = 'Brot';
-  int _index = 0;
+  int _indexAsCategoryId = 0;
+  final DbManager _dbManager = DbManager.instance;
 
   @override
   void initState() {
@@ -37,10 +40,16 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
         color: Colors.deepPurpleAccent,
       ),
       onChanged: (String? newValue) {
-        setState(() {
-          widget.dropdownValue = newValue!;
-          _index = widget.categoriesFromDBasList.indexOf(newValue);
-        });
+        setState(
+          () {
+            widget.dropdownValue = newValue!;
+            _indexAsCategoryId =
+                widget.categoriesFromDBasList.indexOf(newValue);
+            int _itemId = widget.itemData[_dbManager.inventoryColumnNameItemID];
+            widget.updateCategoryIdInItemDataFunction(
+                itemId: _itemId, newCategoryId: _indexAsCategoryId);
+          },
+        );
       },
       items: widget.categoriesFromDBasList
           .map<DropdownMenuItem<String>>((String value) {
