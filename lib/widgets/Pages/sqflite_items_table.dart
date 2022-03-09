@@ -13,8 +13,6 @@ class SqfliteItemsTablePage extends StatefulWidget {
 class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   static const String _title = 'SQFlite Beispiel Lagerhaus';
   DbManager dbManager = DbManager.instance;
-  Future<List<Map<String, dynamic>>>? _categoriesData;
-  Future<List<Map<String, dynamic>>>? _inventoryData;
   Future<List<List<Map<String, dynamic>>>>? _allData;
 
   @override
@@ -28,7 +26,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     debugPrint('_loadData()');
     _allData = dbManager.queryAllRowsFromAllTables();
 
-    debugPrint('_inventoryData: ' + _inventoryData.toString());
     setState(
       () {
         _allData = dbManager.queryAllRowsFromAllTables();
@@ -83,14 +80,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   const SizedBox(
                     width: 16,
                   ),
-                  IconButton(
-                    iconSize: 32,
-                    color: Colors.deepPurpleAccent,
-                    icon: const Icon(Icons.check),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
                 ],
               ),
               onPressed: () {},
@@ -120,7 +109,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     } else {
       _showErrorDialog(context, _resultErrorList.toString());
     }
-    debugPrint('_resultErrorList : ' + _resultErrorList.toString());
+    Navigator.of(context).pop();
   }
 
   void _increaseItemCount(int itemId) async {

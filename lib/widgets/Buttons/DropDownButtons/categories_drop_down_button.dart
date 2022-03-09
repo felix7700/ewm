@@ -1,6 +1,7 @@
 import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CategoriesDropDownButton extends StatefulWidget {
   CategoriesDropDownButton(
       {required this.itemData,
