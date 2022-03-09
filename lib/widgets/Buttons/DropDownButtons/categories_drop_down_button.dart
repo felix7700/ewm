@@ -10,9 +10,9 @@ class CategoriesDropDownButton extends StatefulWidget {
       Key? key})
       : super(key: key);
   String? dropdownValue;
-  List<String> categoriesFromDBasList = [];
-  Map<String, dynamic> itemData;
-  Function updateCategoryIdInItemDataFunction;
+  final List<String> categoriesFromDBasList;
+  final Map<String, dynamic> itemData;
+  final Function updateCategoryIdInItemDataFunction;
 
   @override
   State<CategoriesDropDownButton> createState() =>

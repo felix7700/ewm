@@ -13,9 +13,9 @@ class SqfliteItemsTablePage extends StatefulWidget {
 class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   static const String _title = 'SQFlite Beispiel Lagerhaus';
   DbManager dbManager = DbManager.instance;
-  late Future<List<Map<String, dynamic>>> _categoriesData;
-  late Future<List<Map<String, dynamic>>> _inventoryData;
-  late Future<List<List<Map<String, dynamic>>>> _allData;
+  Future<List<Map<String, dynamic>>>? _categoriesData;
+  Future<List<Map<String, dynamic>>>? _inventoryData;
+  Future<List<List<Map<String, dynamic>>>>? _allData;
 
   @override
   void initState() {
@@ -24,14 +24,14 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     _allData = dbManager.queryAllRowsFromAllTables();
   }
 
-  void _loadData() async {
+  void _loadData() {
     debugPrint('_loadData()');
+    _allData = dbManager.queryAllRowsFromAllTables();
+
+    debugPrint('_inventoryData: ' + _inventoryData.toString());
     setState(
       () {
-        _categoriesData =
-            dbManager.queryAllRows(tableName: dbManager.categoriesTableName);
-        _inventoryData =
-            dbManager.queryAllRows(tableName: dbManager.inventoryTableName);
+        _allData = dbManager.queryAllRowsFromAllTables();
       },
     );
   }
@@ -42,25 +42,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Ups! Ein Fehler ist aufgetreten!'),
         content: Text(errorText),
-      ),
-    );
-  }
-
-  Future<String?> _showEditItemValueDialog(
-      {required BuildContext context,
-      required String title,
-      required int itemId,
-      required String columnName,
-      required String itemValue}) {
-    TextEditingController _textEditingController = TextEditingController();
-    _textEditingController.text = itemValue;
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text(title),
-        content: TextField(
-          controller: _textEditingController,
-        ),
       ),
     );
   }
@@ -140,22 +121,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       _showErrorDialog(context, _resultErrorList.toString());
     }
     debugPrint('_resultErrorList : ' + _resultErrorList.toString());
-  }
-
-  void _increaseItemCountWithErrorMessageForErrorDemonstation(
-      int itemId) async {
-    String _table = dbManager.inventoryTableName;
-    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
-    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
-    String _itemId = itemId.toString();
-    String _queryString =
-        'UUPDATE $_table SET $_columnToIncrease = $_columnToIncrease + 1 WHERE $_inventoryColumnNameItemID = $_itemId';
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
-      _loadData();
-    } else {
-      _showErrorDialog(context, _resultErrorList.toString());
-    }
   }
 
   void _increaseItemCount(int itemId) async {
