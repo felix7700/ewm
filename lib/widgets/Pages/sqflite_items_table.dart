@@ -1,5 +1,6 @@
 import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
+import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_name.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
 
@@ -43,7 +44,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
-  void _updateCategoryIdForItemInTableInvetory(
+  void _updateItemCategory(
       {required int itemId, required int newCategoryId}) async {
     String _table = dbManager.inventoryTableName;
     String _columnToUpdate = dbManager.inventoryColumnNameCategoryId;
@@ -63,12 +64,14 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
 
   void _updateItemName(
       {required int itemId, required String newItemName}) async {
+    debugPrint('_updateItemName() itemId: $itemId  newItemName: $newItemName');
     String _table = dbManager.inventoryTableName;
-    String _columnToUpdate = dbManager.inventoryColumnNameCategoryId;
+    String _columnToUpdate = dbManager.inventoryColumnNameItemName;
     String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
     String _itemId = itemId.toString();
     String _queryString =
-        'UPDATE $_table SET $_columnToUpdate = $newItemName WHERE $_inventoryColumnNameItemID = $_itemId';
+        'UPDATE $_table SET $_columnToUpdate = "$newItemName" WHERE $_inventoryColumnNameItemID = $_itemId';
+    debugPrint('_queryString: ' + _queryString);
     var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
     if (_resultErrorList.isEmpty) {
       _loadData();
@@ -107,8 +110,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                 children: [
                   CategoriesDropDownButton(
                     itemData: itemData,
-                    updateCategoryIdInItemDataFunction:
-                        _updateCategoryIdForItemInTableInvetory,
+                    updateCategoryIdInItemDataFunction: _updateItemCategory,
                     categoriesFromDBasList: _categoriesAsList,
                     dropdownValue: dropdownInitValue,
                   ),
@@ -139,29 +141,11 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: Text(title),
-        content: Row(
-          children: [
-            TextButton(
-              child: Row(
-                children: [
-                  CategoriesDropDownButton(
-                    itemData: itemData,
-                    updateCategoryIdInItemDataFunction:
-                        _updateCategoryIdForItemInTableInvetory,
-                    categoriesFromDBasList: _categoriesAsList,
-                    dropdownValue: dropdownInitValue,
-                  ),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                ],
-              ),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
+          title: Text(title),
+          content: InputCardEditItemName(
+            itemId: itemData[dbManager.inventoryColumnNameItemID],
+            updateItemNameinSqliteDB: _updateItemName,
+          )),
     );
   }
 
@@ -314,9 +298,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               verticalAlignment: TableCellVerticalAlignment.top,
               child: TextButton(
                 onPressed: () {
-                  _showEditItemCategoryDialog(
-                    categories: categoriesData,
-                    title: 'Kategorie wählen:',
+                  _showEditItemNameDialog(
+                    title: 'Neuer Artikelname:',
                     itemData: inventoryData[rowIndex],
                     columnNameToUpdate: dbManager.inventoryColumnNameCategoryId,
                   );

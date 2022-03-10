@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class InputCardEditItemName extends StatelessWidget {
-  InputCardEditItemName({Key? key, required this.addItemFunction})
+  InputCardEditItemName(
+      {Key? key, required this.updateItemNameinSqliteDB, required this.itemId})
       : super(key: key);
-  final Function addItemFunction;
+  final Function updateItemNameinSqliteDB;
+  final int itemId;
   final titleController = TextEditingController();
   final priceController = TextEditingController();
   final _formKeyTitleInput = GlobalKey<FormState>();
-  final _formKeyPriceInput = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class InputCardEditItemName extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
+                      autofocus: true,
                       decoration:
                           const InputDecoration(labelText: 'Artikelname'),
                       controller: titleController,
@@ -41,44 +43,21 @@ class InputCardEditItemName extends StatelessWidget {
                   ],
                 ),
               ),
-              Form(
-                key: _formKeyPriceInput,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // InputTextFormFieldPrice(priceController: priceController),
-                    TextFormField(
-                      decoration: const InputDecoration(labelText: 'Preis'),
-                      controller: priceController,
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Bitte einen Preis eingeben!';
-                        }
-                        if (double.parse(value) > 999.99) {
-                          return 'Bitte einen realen Artikelpreis eingeben!';
-                        }
-
-                        return null;
-                      },
-                    )
-                  ],
-                ),
-              ),
               TextButton(
                 child: const Text(
-                  'Artikel hinzufügen',
+                  'Fertig',
                   style: TextStyle(color: Colors.purple),
                 ),
                 onPressed: () {
-                  if (_formKeyTitleInput.currentState!.validate() &&
-                      _formKeyPriceInput.currentState!.validate()) {
+                  if (_formKeyTitleInput.currentState!.validate()) {
                     debugPrint('submitData()');
-                    addItemFunction(['text1', 'text2']);
+                    updateItemNameinSqliteDB(
+                      itemId: itemId,
+                      newItemName: titleController.text,
+                    );
                     // [titleController.text, priceController.text]);
                   }
-                  if (_formKeyTitleInput.currentState!.validate() &&
-                      _formKeyPriceInput.currentState!.validate()) {
+                  if (_formKeyTitleInput.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content:
