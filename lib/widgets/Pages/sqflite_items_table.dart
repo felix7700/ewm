@@ -43,15 +43,51 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
+  void _updateCategoryIdForItemInTableInvetory(
+      {required int itemId, required int newCategoryId}) async {
+    String _table = dbManager.inventoryTableName;
+    String _columnToUpdate = dbManager.inventoryColumnNameCategoryId;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UPDATE $_table SET $_columnToUpdate = $newCategoryId WHERE $_inventoryColumnNameItemID = $_itemId';
+    debugPrint('_queryString : ' + _queryString);
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
+    Navigator.of(context).pop();
+  }
+
+  void _updateItemName(
+      {required int itemId, required String newItemName}) async {
+    String _table = dbManager.inventoryTableName;
+    String _columnToUpdate = dbManager.inventoryColumnNameCategoryId;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UPDATE $_table SET $_columnToUpdate = $newItemName WHERE $_inventoryColumnNameItemID = $_itemId';
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
+    Navigator.of(context).pop();
+  }
+
   Future<String?> _showEditItemCategoryDialog({
-    required BuildContext context,
     required String title,
     required Map<String, dynamic> itemData,
-    required String columnName,
+    required String columnNameToUpdate,
     required List<Map<String, dynamic>> categories,
   }) {
     String dropdownInitValue =
-        categories[0][dbManager.categoriesColumnNameCategoryName];
+        categories[(itemData[dbManager.inventoryColumnNameCategoryId]) as int]
+            [dbManager.categoriesColumnNameCategoryName];
+    debugPrint('dropdownInitValue: ' + dropdownInitValue.toString());
     TextEditingController _categoryTextEditingController =
         TextEditingController();
     _categoryTextEditingController.text = dropdownInitValue;
@@ -60,6 +96,45 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       _categoriesAsList.add(
           categories[i][dbManager.categoriesColumnNameCategoryName].toString());
     }
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: Row(
+          children: [
+            TextButton(
+              child: Row(
+                children: [
+                  CategoriesDropDownButton(
+                    itemData: itemData,
+                    updateCategoryIdInItemDataFunction:
+                        _updateCategoryIdForItemInTableInvetory,
+                    categoriesFromDBasList: _categoriesAsList,
+                    dropdownValue: dropdownInitValue,
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                ],
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<String?> _showEditItemNameDialog({
+    required String title,
+    required Map<String, dynamic> itemData,
+    required String columnNameToUpdate,
+  }) {
+    String dropdownInitValue = itemData[dbManager.inventoryColumnNameItemName];
+    TextEditingController _categoryTextEditingController =
+        TextEditingController();
+    _categoryTextEditingController.text = dropdownInitValue;
+    List<String> _categoriesAsList = [];
 
     return showDialog<String>(
       context: context,
@@ -73,7 +148,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   CategoriesDropDownButton(
                     itemData: itemData,
                     updateCategoryIdInItemDataFunction:
-                        _updateCategoryIdInItemData,
+                        _updateCategoryIdForItemInTableInvetory,
                     categoriesFromDBasList: _categoriesAsList,
                     dropdownValue: dropdownInitValue,
                   ),
@@ -84,32 +159,10 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               ),
               onPressed: () {},
             ),
-            const SizedBox(
-              width: 16,
-            ),
           ],
         ),
       ),
     );
-  }
-
-  void _updateCategoryIdInItemData(
-      {required int itemId, required int newCategoryId}) async {
-    debugPrint('_updateCategoryIdInItemData');
-    String _table = dbManager.inventoryTableName;
-    String _columnToUpdate = dbManager.inventoryColumnNameCategoryId;
-    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
-    String _itemId = itemId.toString();
-    String _queryString =
-        'UPDATE $_table SET $_columnToUpdate = $newCategoryId WHERE $_inventoryColumnNameItemID = $_itemId';
-    debugPrint('_queryString : ' + _queryString);
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
-      _loadData(); // ToDo: _loadData needs to await data! this is the reason no why new values not displayed
-    } else {
-      _showErrorDialog(context, _resultErrorList.toString());
-    }
-    Navigator.of(context).pop();
   }
 
   void _increaseItemCount(int itemId) async {
@@ -244,10 +297,9 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                 onPressed: () {
                   _showEditItemCategoryDialog(
                     categories: categoriesData,
-                    context: context,
                     title: 'Kategorie wählen:',
                     itemData: inventoryData[rowIndex],
-                    columnName: dbManager.inventoryColumnNameCategoryId,
+                    columnNameToUpdate: dbManager.inventoryColumnNameCategoryId,
                   );
                 },
                 child: Text(
@@ -261,7 +313,14 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  _showEditItemCategoryDialog(
+                    categories: categoriesData,
+                    title: 'Kategorie wählen:',
+                    itemData: inventoryData[rowIndex],
+                    columnNameToUpdate: dbManager.inventoryColumnNameCategoryId,
+                  );
+                },
                 child: Text(
                     inventoryData[rowIndex]
                         [dbManager.inventoryColumnNameItemName],
