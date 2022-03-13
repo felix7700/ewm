@@ -39,15 +39,13 @@ class InputCardEditItemPrice extends StatelessWidget {
                           return 'Bitte einen Preis eingeben!';
                         }
                         value = value.replaceAll(r",", ".");
-                        // double d = 2.3456789;
-                        double d = double.parse(value);
-                        String inString = d.toStringAsFixed(2); // '2.35'
-                        double inDouble = double.parse(inString);
-                        value = inString;
                         try {
                           if (double.parse(value) > 999.99) {
                             return 'Bitte einen realen Artikelpreis eingeben!';
                           }
+                          double d = double.parse(value);
+                          String inString = d.toStringAsFixed(2);
+                          value = inString;
                           _priceController.text = value.toString();
                           return null;
                         } catch (error) {
