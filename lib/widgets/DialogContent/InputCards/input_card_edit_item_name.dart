@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 
 class InputCardEditItemName extends StatelessWidget {
   InputCardEditItemName(
-      {Key? key, required this.updateItemNameinSqliteDB, required this.itemId})
-      : super(key: key);
+      {Key? key,
+      required this.updateItemNameinSqliteDB,
+      required this.itemId,
+      required this.itemNameTextFieldInitValue})
+      : super(key: key) {
+    titleController.text = itemNameTextFieldInitValue;
+  }
+
   final Function updateItemNameinSqliteDB;
   final int itemId;
+  final String itemNameTextFieldInitValue;
   final titleController = TextEditingController();
-  final priceController = TextEditingController();
   final _formKeyTitleInput = GlobalKey<FormState>();
 
   @override
@@ -55,13 +61,11 @@ class InputCardEditItemName extends StatelessWidget {
                       itemId: itemId,
                       newItemName: titleController.text,
                     );
-                    // [titleController.text, priceController.text]);
                   }
                   if (_formKeyTitleInput.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content:
-                            Text('Artikel wurde zur Einkausliste hinzugefügt'),
+                        content: Text('Artikeldaten wurden aktualisiert'),
                       ),
                     );
                   }

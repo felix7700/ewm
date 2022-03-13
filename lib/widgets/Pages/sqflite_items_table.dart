@@ -1,6 +1,7 @@
 import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
 import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_name.dart';
+import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_price.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
 
@@ -81,10 +82,28 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     Navigator.of(context).pop();
   }
 
+  void _updateItemPrice(
+      {required int itemId, required String newItemPrice}) async {
+    debugPrint('_updateItemName() itemId: $itemId  newItemName: $newItemPrice');
+    String _table = dbManager.inventoryTableName;
+    String _columnToUpdate = dbManager.inventoryColumnNameItemPrice;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UPDATE $_table SET $_columnToUpdate = "$newItemPrice" WHERE $_inventoryColumnNameItemID = $_itemId';
+    debugPrint('_queryString: ' + _queryString);
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
+    Navigator.of(context).pop();
+  }
+
   Future<String?> _showEditItemCategoryDialog({
     required String title,
     required Map<String, dynamic> itemData,
-    required String columnNameToUpdate,
     required List<Map<String, dynamic>> categories,
   }) {
     String dropdownInitValue =
@@ -130,7 +149,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   Future<String?> _showEditItemNameDialog({
     required String title,
     required Map<String, dynamic> itemData,
-    required String columnNameToUpdate,
   }) {
     String dropdownInitValue = itemData[dbManager.inventoryColumnNameItemName];
     TextEditingController _categoryTextEditingController =
@@ -141,11 +159,38 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-          title: Text(title),
-          content: InputCardEditItemName(
-            itemId: itemData[dbManager.inventoryColumnNameItemID],
-            updateItemNameinSqliteDB: _updateItemName,
-          )),
+        title: Text(title),
+        content: InputCardEditItemName(
+          itemId: itemData[dbManager.inventoryColumnNameItemID],
+          updateItemNameinSqliteDB: _updateItemName,
+          itemNameTextFieldInitValue:
+              itemData[dbManager.inventoryColumnNameItemName],
+        ),
+      ),
+    );
+  }
+
+  Future<String?> _showEditItemPriceDialog({
+    required String title,
+    required Map<String, dynamic> itemData,
+  }) {
+    String dropdownInitValue = itemData[dbManager.inventoryColumnNameItemName];
+    TextEditingController _categoryTextEditingController =
+        TextEditingController();
+    _categoryTextEditingController.text = dropdownInitValue;
+    List<String> _categoriesAsList = [];
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: InputCardEditItemPrice(
+          itemId: itemData[dbManager.inventoryColumnNameItemID],
+          updateItemPriceinSqliteDB: _updateItemPrice,
+          editItemPriceTextFieldInitValue:
+              itemData[dbManager.inventoryColumnNameItemPrice],
+        ),
+      ),
     );
   }
 
@@ -283,7 +328,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                     categories: categoriesData,
                     title: 'Kategorie wählen:',
                     itemData: inventoryData[rowIndex],
-                    columnNameToUpdate: dbManager.inventoryColumnNameCategoryId,
                   );
                 },
                 child: Text(
@@ -301,7 +345,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   _showEditItemNameDialog(
                     title: 'Neuer Artikelname:',
                     itemData: inventoryData[rowIndex],
-                    columnNameToUpdate: dbManager.inventoryColumnNameCategoryId,
                   );
                 },
                 child: Text(
@@ -313,11 +356,16 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  _showEditItemPriceDialog(
+                    title: 'Neuer Preis:',
+                    itemData: inventoryData[rowIndex],
+                  );
+                },
                 child: Text(
                   inventoryData[rowIndex]
                           [dbManager.inventoryColumnNameItemPrice]
-                      .toString(),
+                      .toStringAsFixed(2),
                   style: _cellTextStyle,
                 ),
               ),
