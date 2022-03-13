@@ -1,9 +1,10 @@
 import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
 import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_name.dart';
-import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_price.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
+import '../DialogContent/InputCards/input_card_edit_item_count.dart';
+import '../DialogContent/InputCards/input_card_edit_item_price.dart';
 
 class SqfliteItemsTablePage extends StatefulWidget {
   const SqfliteItemsTablePage({Key? key}) : super(key: key);
@@ -65,7 +66,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
 
   void _updateItemName(
       {required int itemId, required String newItemName}) async {
-    debugPrint('_updateItemName() itemId: $itemId  newItemName: $newItemName');
     String _table = dbManager.inventoryTableName;
     String _columnToUpdate = dbManager.inventoryColumnNameItemName;
     String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
@@ -84,7 +84,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
 
   void _updateItemPrice(
       {required int itemId, required String newItemPrice}) async {
-    debugPrint('_updateItemName() itemId: $itemId  newItemName: $newItemPrice');
     String _table = dbManager.inventoryTableName;
     String _columnToUpdate = dbManager.inventoryColumnNameItemPrice;
     String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
@@ -99,6 +98,38 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       _showErrorDialog(context, _resultErrorList.toString());
     }
     Navigator.of(context).pop();
+  }
+
+  void _increaseItemCount({required int itemId}) async {
+    debugPrint('_increaseItemCount');
+    String _table = dbManager.inventoryTableName;
+    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease + 1 WHERE $_inventoryColumnNameItemID = $_itemId';
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
+    Navigator.of(context).pop();
+  }
+
+  void _decreaseItemCount({required int itemId}) async {
+    String _table = dbManager.inventoryTableName;
+    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
+    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
+    String _itemId = itemId.toString();
+    String _queryString =
+        'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease - 1 WHERE $_inventoryColumnNameItemID = $_itemId AND $_columnToIncrease > 0';
+    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorList.isEmpty) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorList.toString());
+    }
   }
 
   Future<String?> _showEditItemCategoryDialog({
@@ -124,21 +155,18 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
         title: Text(title),
         content: Row(
           children: [
-            TextButton(
-              child: Row(
-                children: [
-                  CategoriesDropDownButton(
-                    itemData: itemData,
-                    updateCategoryIdInItemDataFunction: _updateItemCategory,
-                    categoriesFromDBasList: _categoriesAsList,
-                    dropdownValue: dropdownInitValue,
-                  ),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                ],
-              ),
-              onPressed: () {},
+            Row(
+              children: [
+                CategoriesDropDownButton(
+                  itemData: itemData,
+                  updateCategoryIdInItemDataFunction: _updateItemCategory,
+                  categoriesFromDBasList: _categoriesAsList,
+                  dropdownValue: dropdownInitValue,
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+              ],
             ),
           ],
         ),
@@ -154,7 +182,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     TextEditingController _categoryTextEditingController =
         TextEditingController();
     _categoryTextEditingController.text = dropdownInitValue;
-    List<String> _categoriesAsList = [];
 
     return showDialog<String>(
       context: context,
@@ -165,6 +192,30 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           updateItemNameinSqliteDB: _updateItemName,
           itemNameTextFieldInitValue:
               itemData[dbManager.inventoryColumnNameItemName],
+        ),
+      ),
+    );
+  }
+
+  Future<String?> _showEditItemCountDialog({
+    required String title,
+    required Map<String, dynamic> itemData,
+  }) {
+    String dropdownInitValue = itemData[dbManager.inventoryColumnNameItemName];
+    TextEditingController _categoryTextEditingController =
+        TextEditingController();
+    _categoryTextEditingController.text = dropdownInitValue;
+    List<String> _categoriesAsList = [];
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: InputCardEditItemCount(
+          itemId: itemData[dbManager.inventoryColumnNameItemID],
+          increaseItemCountFunction: _increaseItemCount,
+          editItemCountTextFieldInitValue:
+              itemData[dbManager.inventoryColumnNameItemCount],
         ),
       ),
     );
@@ -192,36 +243,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
         ),
       ),
     );
-  }
-
-  void _increaseItemCount(int itemId) async {
-    String _table = dbManager.inventoryTableName;
-    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
-    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
-    String _itemId = itemId.toString();
-    String _queryString =
-        'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease + 1 WHERE $_inventoryColumnNameItemID = $_itemId';
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
-      _loadData();
-    } else {
-      _showErrorDialog(context, _resultErrorList.toString());
-    }
-  }
-
-  void _decreaseItemCount(int itemId) async {
-    String _table = dbManager.inventoryTableName;
-    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
-    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
-    String _itemId = itemId.toString();
-    String _queryString =
-        'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease - 1 WHERE $_inventoryColumnNameItemID = $_itemId AND $_columnToIncrease > 0';
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
-      _loadData();
-    } else {
-      _showErrorDialog(context, _resultErrorList.toString());
-    }
   }
 
   List<TableRow> _getTableRows(
@@ -371,9 +392,13 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               ),
             ),
             TableCell(
-              verticalAlignment: TableCellVerticalAlignment.top,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  _showEditItemCountDialog(
+                    title: 'Artikel ein-/ausbuchen',
+                    itemData: inventoryData[rowIndex],
+                  );
+                },
                 child: Text(
                   inventoryData[rowIndex]
                           [dbManager.inventoryColumnNameItemCount]

@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 
 class IncreaseItemCountIconButton extends StatelessWidget {
   const IncreaseItemCountIconButton(
-      {required this.itemId,
-      required this.color,
-      required this.buttonPressed,
-      Key? key})
+      {required this.color, required this.increaseItemCountFunction, Key? key})
       : super(key: key);
-  final int itemId;
   final Color color;
-  final Function buttonPressed;
+  final Function increaseItemCountFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +16,7 @@ class IncreaseItemCountIconButton extends StatelessWidget {
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
       color: color,
-      onPressed: () => buttonPressed(itemId),
+      onPressed: () => increaseItemCountFunction(),
     );
   }
 }
