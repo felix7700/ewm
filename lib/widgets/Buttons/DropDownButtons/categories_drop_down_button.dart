@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class CategoriesDropDownButton extends StatefulWidget {
   CategoriesDropDownButton(
-      {required this.itemData,
+      {required this.itemId,
       required this.updateCategoryIdInItemDataFunction,
-      required this.categoriesFromDBasList,
+      required this.categoriesData,
       required this.dropdownValue,
       Key? key})
       : super(key: key);
   String? dropdownValue;
-  final List<String> categoriesFromDBasList;
-  final Map<String, dynamic> itemData;
+  List<String> categoriesAsList = [];
+  final List<Map<String, dynamic>> categoriesData;
+  final int itemId;
   final Function updateCategoryIdInItemDataFunction;
+
+  final DbManager dbManager = DbManager.instance;
 
   @override
   State<CategoriesDropDownButton> createState() =>
@@ -27,6 +30,11 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
   @override
   void initState() {
     super.initState();
+    for (int i = 0; i < widget.categoriesData.length; i++) {
+      widget.categoriesAsList.add(widget.categoriesData[i]
+              [widget.dbManager.categoriesColumnNameCategoryName]
+          .toString());
+    }
   }
 
   @override
@@ -44,16 +52,14 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
         setState(
           () {
             widget.dropdownValue = newValue!;
-            _indexAsCategoryId =
-                widget.categoriesFromDBasList.indexOf(newValue);
-            int _itemId = widget.itemData[_dbManager.inventoryColumnNameItemID];
+            _indexAsCategoryId = widget.categoriesAsList.indexOf(newValue);
             widget.updateCategoryIdInItemDataFunction(
-                itemId: _itemId, newCategoryId: _indexAsCategoryId);
+                itemId: widget.itemId, newCategoryId: _indexAsCategoryId);
           },
         );
       },
-      items: widget.categoriesFromDBasList
-          .map<DropdownMenuItem<String>>((String value) {
+      items:
+          widget.categoriesAsList.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem(
           value: value,
           child: Text(value),

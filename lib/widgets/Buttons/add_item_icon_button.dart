@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class AddItemIconButton extends StatelessWidget {
-  AddItemIconButton({required this.refreshItemsFunction, Key? key})
+  AddItemIconButton(
+      {required this.refreshItemsFunction,
+      required this.categoriesDataMap,
+      Key? key})
       : super(key: key);
 
-  DbManager dbManager = DbManager.instance;
-  Function refreshItemsFunction;
+  final DbManager dbManager = DbManager.instance;
+  final Function refreshItemsFunction;
+  final List<Map<String, dynamic>> categoriesDataMap;
+  final List<String> categoriesAsList = [];
 
   void _addItem(String newCategoryName) {
     debugPrint('Add Category: ' + newCategoryName);
@@ -26,7 +31,10 @@ class AddItemIconButton extends StatelessWidget {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Neuer Artikel'),
-        content: AddNewItemCard(addItemFunction: _addItem),
+        content: AddNewItemCard(
+          dataUpdatedFunction: _addItem,
+          categoriesAsList: categoriesAsList,
+        ),
       ),
     );
   }

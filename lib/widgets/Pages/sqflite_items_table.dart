@@ -132,9 +132,9 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             Row(
               children: [
                 CategoriesDropDownButton(
-                  itemData: itemData,
+                  itemId: itemData[dbManager.inventoryColumnNameItemID],
                   updateCategoryIdInItemDataFunction: _updateItemCategory,
-                  categoriesFromDBasList: _categoriesAsList,
+                  categoriesData: categories,
                   dropdownValue: dropdownInitValue,
                 ),
                 const SizedBox(
@@ -424,6 +424,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   ),
                   AddItemIconButton(
                     refreshItemsFunction: _loadData,
+                    categoriesDataMap: _categoriesData,
                   ),
                 ],
               ),

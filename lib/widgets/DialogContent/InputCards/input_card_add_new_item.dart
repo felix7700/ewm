@@ -1,12 +1,41 @@
+import 'package:ewm/db_manager.dart';
+import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
 import 'package:flutter/material.dart';
 
 class AddNewItemCard extends StatelessWidget {
-  AddNewItemCard({Key? key, required this.addItemFunction}) : super(key: key);
-  final Function addItemFunction;
+  AddNewItemCard(
+      {Key? key,
+      required this.dataUpdatedFunction,
+      required this.categoriesAsList})
+      : super(key: key);
+  final Function dataUpdatedFunction;
+  List<String> categoriesAsList;
+
   final titleController = TextEditingController();
   final priceController = TextEditingController();
   final _formKeyTitleInput = GlobalKey<FormState>();
   final _formKeyPriceInput = GlobalKey<FormState>();
+
+  DbManager _dbManager = DbManager.instance;
+
+  void _addItemToInventoryTable() async {
+    debugPrint('_addItemToInventoryTable');
+
+    Map<String, dynamic> _newItemDataRow = {
+      // inventoryColumnNameItemID: 1,
+      _dbManager.inventoryColumnNameCategoryId: 1,
+      _dbManager.inventoryColumnNameItemName: 'Deutsche Markenbutter',
+      _dbManager.inventoryColumnNameItemPrice: 1.29,
+      _dbManager.inventoryColumnNameItemCount: 2
+    };
+
+    var _result = await _dbManager.insertIntoTable(
+        tableName: _dbManager.inventoryTableName, row: _newItemDataRow);
+
+    debugPrint(
+      '_result: ' + _result.toString(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +47,11 @@ class AddNewItemCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
+              // CategoriesDropDownButton(
+              //     itemId: 1,
+              //     updateCategoryIdInItemDataFunction: _addItemToInventoryTable,
+              //     categoriesAsList: categoriesAsList,
+              //     dropdownValue: categoriesAsList[0]),
               Form(
                 key: _formKeyTitleInput,
                 child: Column(
@@ -73,7 +107,7 @@ class AddNewItemCard extends StatelessWidget {
                   if (_formKeyTitleInput.currentState!.validate() &&
                       _formKeyPriceInput.currentState!.validate()) {
                     debugPrint('submitData()');
-                    addItemFunction(['text1', 'text2']);
+                    dataUpdatedFunction(['text1', 'text2']);
                     // [titleController.text, priceController.text]);
                   }
                   if (_formKeyTitleInput.currentState!.validate() &&
