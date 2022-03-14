@@ -36,6 +36,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
+  void _loadDataAndCloseDialog() {
+    debugPrint('_loadDataAndCloseDialog');
+    _loadData();
+    Navigator.of(context).pop();
+  }
+
   Future<String?> _showErrorDialog(BuildContext context, String errorText) {
     return showDialog<String>(
       context: context,
@@ -98,38 +104,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       _showErrorDialog(context, _resultErrorList.toString());
     }
     Navigator.of(context).pop();
-  }
-
-  void _increaseItemCount({required int itemId}) async {
-    debugPrint('_increaseItemCount');
-    String _table = dbManager.inventoryTableName;
-    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
-    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
-    String _itemId = itemId.toString();
-    String _queryString =
-        'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease + 1 WHERE $_inventoryColumnNameItemID = $_itemId';
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
-      _loadData();
-    } else {
-      _showErrorDialog(context, _resultErrorList.toString());
-    }
-    Navigator.of(context).pop();
-  }
-
-  void _decreaseItemCount({required int itemId}) async {
-    String _table = dbManager.inventoryTableName;
-    String _columnToIncrease = dbManager.inventoryColumnNameItemCount;
-    String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
-    String _itemId = itemId.toString();
-    String _queryString =
-        'UPDATE $_table SET $_columnToIncrease = $_columnToIncrease - 1 WHERE $_inventoryColumnNameItemID = $_itemId AND $_columnToIncrease > 0';
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
-      _loadData();
-    } else {
-      _showErrorDialog(context, _resultErrorList.toString());
-    }
   }
 
   Future<String?> _showEditItemCategoryDialog({
@@ -205,7 +179,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     TextEditingController _categoryTextEditingController =
         TextEditingController();
     _categoryTextEditingController.text = dropdownInitValue;
-    List<String> _categoriesAsList = [];
 
     return showDialog<String>(
       context: context,
@@ -213,9 +186,9 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
         title: Text(title),
         content: InputCardEditItemCount(
           itemId: itemData[dbManager.inventoryColumnNameItemID],
-          increaseItemCountFunction: _increaseItemCount,
-          editItemCountTextFieldInitValue:
-              itemData[dbManager.inventoryColumnNameItemCount],
+          itemCountValue: itemData[dbManager.inventoryColumnNameItemCount],
+          dataUpdatedFunction: _loadDataAndCloseDialog,
+          dialogbuildContext: context,
         ),
       ),
     );
