@@ -52,7 +52,7 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
         setState(
           () {
             widget.dropdownValue = newValue!;
-            _indexAsCategoryId = widget.categoriesAsList.indexOf(newValue);
+            _indexAsCategoryId = widget.categoriesAsList.indexOf(newValue) + 1;
             widget.updateCategoryIdInItemDataFunction(
                 itemId: widget.itemId, newCategoryId: _indexAsCategoryId);
           },

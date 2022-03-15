@@ -40,8 +40,8 @@ class InputCardEditItemName extends StatelessWidget {
                         if (value!.isEmpty) {
                           return 'Bitte einen Artikelnamen eingeben!';
                         }
-                        if (value.length > 20) {
-                          return 'Maximal 20 Zeichen!';
+                        if (value.length > 30) {
+                          return 'Maximal 30 Zeichen!';
                         }
                         return null;
                       },

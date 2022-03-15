@@ -112,7 +112,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     required List<Map<String, dynamic>> categories,
   }) {
     String dropdownInitValue =
-        categories[(itemData[dbManager.inventoryColumnNameCategoryId]) as int]
+        categories[itemData[dbManager.inventoryColumnNameCategoryId] - 1]
             [dbManager.categoriesColumnNameCategoryName];
     debugPrint('dropdownInitValue: ' + dropdownInitValue.toString());
     TextEditingController _categoryTextEditingController =
@@ -219,7 +219,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   }
 
   List<TableRow> _getTableRows(
-      {required List<Map<String, dynamic>> categoriesData,
+      {required List<Map<String, dynamic>> categoriesDataAsList,
       required List<Map<String, dynamic>> inventoryData}) {
     final List<TableRow> tableRows = [];
 
@@ -295,8 +295,23 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
         ],
       ),
     );
+    debugPrint('categoriesData: $categoriesDataAsList');
 
     for (int rowIndex = 0; rowIndex < inventoryData.length; rowIndex++) {
+      String _categoryName = categoriesDataAsList[inventoryData[rowIndex]
+              [dbManager.inventoryColumnNameCategoryId] -
+          1][dbManager.categoriesColumnNameCategoryName];
+      int _categoryIdAsInt =
+          inventoryData[rowIndex][dbManager.inventoryColumnNameCategoryId];
+      String _itemName =
+          inventoryData[rowIndex][dbManager.inventoryColumnNameItemName];
+      String _itemPriceAsString = inventoryData[rowIndex]
+              [dbManager.inventoryColumnNameItemPrice]
+          .toStringAsFixed(2);
+      String _itemCountAsString = inventoryData[rowIndex]
+              [dbManager.inventoryColumnNameItemCount]
+          .toString();
+
       tableRows.add(
         TableRow(
           children: [
@@ -319,15 +334,13 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: TextButton(
                 onPressed: () {
                   _showEditItemCategoryDialog(
-                    categories: categoriesData,
+                    categories: categoriesDataAsList,
                     title: 'Kategorie wählen:',
                     itemData: inventoryData[rowIndex],
                   );
                 },
                 child: Text(
-                  categoriesData[inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameCategoryId]]
-                      [dbManager.categoriesColumnNameCategoryName],
+                  _categoryName,
                   style: _cellTextStyle,
                 ),
               ),
@@ -341,10 +354,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                     itemData: inventoryData[rowIndex],
                   );
                 },
-                child: Text(
-                    inventoryData[rowIndex]
-                        [dbManager.inventoryColumnNameItemName],
-                    style: _cellTextStyle),
+                child: Text(_itemName, style: _cellTextStyle),
               ),
             ),
             TableCell(
@@ -357,9 +367,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   );
                 },
                 child: Text(
-                  inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameItemPrice]
-                      .toStringAsFixed(2),
+                  _itemPriceAsString,
                   style: _cellTextStyle,
                 ),
               ),
@@ -373,9 +381,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   );
                 },
                 child: Text(
-                  inventoryData[rowIndex]
-                          [dbManager.inventoryColumnNameItemCount]
-                      .toString(),
+                  _itemCountAsString,
                   style: _cellTextStyle,
                 ),
               ),
@@ -406,7 +412,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             List<Map<String, dynamic>> _inventoryData =
                 _allDataFromAllTables[1];
             final List<TableRow> tableRows = _getTableRows(
-                categoriesData: _categoriesData, inventoryData: _inventoryData);
+                categoriesDataAsList: _categoriesData,
+                inventoryData: _inventoryData);
             widget = Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
