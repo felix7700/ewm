@@ -1,3 +1,4 @@
+import 'package:ewm/widgets/TextFormFields/text_form_field_price.dart';
 import 'package:flutter/material.dart';
 
 class InputCardEditItemPrice extends StatelessWidget {
@@ -12,6 +13,7 @@ class InputCardEditItemPrice extends StatelessWidget {
   final double editItemPriceTextFieldInitValue;
   final _priceController = TextEditingController();
   final _formKeyPriceInput = GlobalKey<FormState>();
+  final TextFormFieldPrice _textFormFieldPrice = TextFormFieldPrice();
 
   @override
   Widget build(BuildContext context) {
@@ -26,35 +28,7 @@ class InputCardEditItemPrice extends StatelessWidget {
             children: <Widget>[
               Form(
                 key: _formKeyPriceInput,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      autofocus: true,
-                      decoration: const InputDecoration(labelText: 'Preis'),
-                      controller: _priceController,
-                      keyboardType: TextInputType.datetime,
-                      validator: (String? value) {
-                        if (value!.isEmpty) {
-                          return 'Bitte einen Preis eingeben!';
-                        }
-                        value = value.replaceAll(r",", ".");
-                        try {
-                          if (double.parse(value) > 999.99) {
-                            return 'Bitte einen realen Artikelpreis eingeben!';
-                          }
-                          double d = double.parse(value);
-                          String inString = d.toStringAsFixed(2);
-                          value = inString;
-                          _priceController.text = value.toString();
-                          return null;
-                        } catch (error) {
-                          return 'Bitte einen Preis eingeben!';
-                        }
-                      },
-                    )
-                  ],
-                ),
+                child: _textFormFieldPrice,
               ),
               TextButton(
                 child: const Text(
@@ -63,12 +37,11 @@ class InputCardEditItemPrice extends StatelessWidget {
                 ),
                 onPressed: () {
                   debugPrint('edit price fertig bnutten was pressed');
-                  String value = _priceController.text;
                   if (_formKeyPriceInput.currentState!.validate()) {
                     debugPrint('submitData()');
                     updateItemPriceinSqliteDB(
                       itemId: itemId,
-                      newItemPrice: _priceController.text,
+                      newItemPrice: _textFormFieldPrice.priceController.text,
                     );
                   }
                   if (_formKeyPriceInput.currentState!.validate()) {

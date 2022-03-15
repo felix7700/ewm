@@ -122,7 +122,7 @@ class DbManager {
       {
         inventoryColumnNameItemID: 3,
         inventoryColumnNameCategoryId: 3,
-        inventoryColumnNameItemName: 'Rotwein',
+        inventoryColumnNameItemName: 'Portwein',
         inventoryColumnNameItemPrice: 2.99,
         inventoryColumnNameItemCount: 5
       }
