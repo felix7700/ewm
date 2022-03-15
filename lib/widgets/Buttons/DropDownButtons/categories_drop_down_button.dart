@@ -7,7 +7,7 @@ class CategoriesDropDownButton extends StatefulWidget {
       {required this.itemId,
       required this.updateCategoryIdInItemDataFunction,
       required this.categoriesData,
-      required this.dropdownValue,
+      this.dropdownValue,
       Key? key})
       : super(key: key);
   String? dropdownValue;
@@ -35,6 +35,7 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
               [widget.dbManager.categoriesColumnNameCategoryName]
           .toString());
     }
+    widget.dropdownValue ??= widget.categoriesAsList[0];
   }
 
   @override

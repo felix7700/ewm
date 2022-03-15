@@ -6,10 +6,10 @@ class AddNewItemCard extends StatelessWidget {
   AddNewItemCard(
       {Key? key,
       required this.dataUpdatedFunction,
-      required this.categoriesAsList})
+      required this.categoriesData})
       : super(key: key);
   final Function dataUpdatedFunction;
-  List<String> categoriesAsList;
+  List<Map<String, dynamic>> categoriesData;
 
   final titleController = TextEditingController();
   final priceController = TextEditingController();
@@ -47,11 +47,11 @@ class AddNewItemCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              // CategoriesDropDownButton(
-              //     itemId: 1,
-              //     updateCategoryIdInItemDataFunction: _addItemToInventoryTable,
-              //     categoriesAsList: categoriesAsList,
-              //     dropdownValue: categoriesAsList[0]),
+              CategoriesDropDownButton(
+                itemId: 1,
+                updateCategoryIdInItemDataFunction: _addItemToInventoryTable,
+                categoriesData: categoriesData,
+              ),
               Form(
                 key: _formKeyTitleInput,
                 child: Column(

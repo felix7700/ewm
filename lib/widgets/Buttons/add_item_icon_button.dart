@@ -33,7 +33,7 @@ class AddItemIconButton extends StatelessWidget {
         title: const Text('Neuer Artikel'),
         content: AddNewItemCard(
           dataUpdatedFunction: _addItem,
-          categoriesAsList: categoriesAsList,
+          categoriesData: categoriesDataMap,
         ),
       ),
     );

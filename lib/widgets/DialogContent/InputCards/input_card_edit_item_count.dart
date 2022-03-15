@@ -49,6 +49,7 @@ class _InputCardEditItemCountState extends State<InputCardEditItemCount> {
     String _itemId = itemId.toString();
     widget.itemCountValue -= decreaseValue;
     if (widget.itemCountValue < 0) {
+      widget.itemCountValue = 0;
       return;
     }
     String _queryString =
