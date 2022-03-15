@@ -36,6 +36,23 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
+  void _addNewItemIntoInventory(
+      {required Map<String, dynamic> newItemdataRow}) async {
+    debugPrint('_addNewItemIntoInventory');
+
+    int? _resultErrorNumber = await dbManager.insertIntoTable(
+        tableName: dbManager.inventoryTableName, row: newItemdataRow);
+    debugPrint('_resultErrorNumber: $_resultErrorNumber');
+
+    if (_resultErrorNumber > 0) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorNumber.toString());
+    }
+    debugPrint(' Navigator.of(context).pop();');
+    Navigator.of(context).pop();
+  }
+
   void _loadDataAndCloseDialog() {
     debugPrint('_loadDataAndCloseDialog');
     _loadData();
@@ -43,6 +60,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   }
 
   Future<String?> _showErrorDialog(BuildContext context, String errorText) {
+    debugPrint('_showErrorDialog()');
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -61,11 +79,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     String _queryString =
         'UPDATE $_table SET $_columnToUpdate = $categoryIdValue WHERE $_inventoryColumnNameItemID = $_itemId';
     debugPrint('_queryString : ' + _queryString);
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
+    var _resultErrorNumber =
+        await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorNumber.isEmpty) {
       _loadData();
     } else {
-      _showErrorDialog(context, _resultErrorList.toString());
+      _showErrorDialog(context, _resultErrorNumber.toString());
     }
     Navigator.of(context).pop();
   }
@@ -79,11 +98,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     String _queryString =
         'UPDATE $_table SET $_columnToUpdate = "$newItemName" WHERE $_inventoryColumnNameItemID = $_itemId';
     debugPrint('_queryString: ' + _queryString);
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
+    var _resultErrorNumber =
+        await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorNumber.isEmpty) {
       _loadData();
     } else {
-      _showErrorDialog(context, _resultErrorList.toString());
+      _showErrorDialog(context, _resultErrorNumber.toString());
     }
     Navigator.of(context).pop();
   }
@@ -97,11 +117,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     String _queryString =
         'UPDATE $_table SET $_columnToUpdate = "$newItemPrice" WHERE $_inventoryColumnNameItemID = $_itemId';
     debugPrint('_queryString: ' + _queryString);
-    var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
-    if (_resultErrorList.isEmpty) {
+    var _resultErrorNumber =
+        await dbManager.rawQuery(queryString: _queryString);
+    if (_resultErrorNumber.isEmpty) {
       _loadData();
     } else {
-      _showErrorDialog(context, _resultErrorList.toString());
+      _showErrorDialog(context, _resultErrorNumber.toString());
     }
     Navigator.of(context).pop();
   }
@@ -416,7 +437,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                 inventoryData: _inventoryData);
             widget = Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
+              child: ListView(
                 children: [
                   Table(
                     children: tableRows,
@@ -430,7 +451,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                     },
                   ),
                   AddItemIconButton(
-                    refreshItemsFunction: _loadData,
+                    addItemToInvetoryAndRefreshDataOnDisplayFunction:
+                        _addNewItemIntoInventory,
                     categoriesDataMap: _categoriesData,
                   ),
                 ],

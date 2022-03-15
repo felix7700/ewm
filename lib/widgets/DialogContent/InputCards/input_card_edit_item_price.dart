@@ -1,4 +1,4 @@
-import 'package:ewm/widgets/TextFormFields/text_form_field_price.dart';
+import 'package:ewm/widgets/FormFields/form_field_price.dart';
 import 'package:flutter/material.dart';
 
 class InputCardEditItemPrice extends StatelessWidget {
@@ -11,13 +11,12 @@ class InputCardEditItemPrice extends StatelessWidget {
   final Function updateItemPriceinSqliteDB;
   final int itemId;
   final double editItemPriceTextFieldInitValue;
-  final _priceController = TextEditingController();
-  final _formKeyPriceInput = GlobalKey<FormState>();
-  final TextFormFieldPrice _textFormFieldPrice = TextFormFieldPrice();
+  final FormFieldPrice formFieldPrice = FormFieldPrice();
 
   @override
   Widget build(BuildContext context) {
-    _priceController.text = editItemPriceTextFieldInitValue.toStringAsFixed(2);
+    formFieldPrice.priceController.text =
+        editItemPriceTextFieldInitValue.toStringAsFixed(2);
     return Card(
       elevation: 5,
       child: Container(
@@ -26,25 +25,24 @@ class InputCardEditItemPrice extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              Form(
-                key: _formKeyPriceInput,
-                child: _textFormFieldPrice,
-              ),
+              formFieldPrice,
               TextButton(
                 child: const Text(
                   'Fertig',
                   style: TextStyle(color: Colors.purple),
                 ),
                 onPressed: () {
-                  debugPrint('edit price fertig bnutten was pressed');
-                  if (_formKeyPriceInput.currentState!.validate()) {
+                  String value = formFieldPrice.priceController.text;
+                  if (formFieldPrice.formKeyPriceInput.currentState!
+                      .validate()) {
                     debugPrint('submitData()');
                     updateItemPriceinSqliteDB(
                       itemId: itemId,
-                      newItemPrice: _textFormFieldPrice.priceController.text,
+                      newItemPrice: formFieldPrice.priceController.text,
                     );
                   }
-                  if (_formKeyPriceInput.currentState!.validate()) {
+                  if (formFieldPrice.formKeyPriceInput.currentState!
+                      .validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Artikeldaten wurden aktualisiert'),
