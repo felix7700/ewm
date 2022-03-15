@@ -23,10 +23,11 @@ class AddNewItemCard extends StatelessWidget {
     debugPrint('_addItemToInventoryTable');
 
     Map<String, dynamic> _newItemDataRow = {
-      // inventoryColumnNameItemID: 1,
+      // inventoryColumnNameItemID: >auto increment if insert a new row<,
       _dbManager.inventoryColumnNameCategoryId: 1,
       _dbManager.inventoryColumnNameItemName: 'Deutsche Markenbutter',
-      _dbManager.inventoryColumnNameItemPrice: 1.29,
+      _dbManager.inventoryColumnNameItemPrice:
+          formFieldPrice.priceController.text,
       _dbManager.inventoryColumnNameItemCount: 1
     };
 
@@ -88,7 +89,6 @@ class AddNewItemCard extends StatelessWidget {
                           .validate()) {
                     debugPrint('submitData()');
                     _addItemToInvetoryAndRefreshDataOnDisplayFunction();
-                    // [titleController.text, priceController.text]);
                   }
                   if (_formKeyTitleInput.currentState!.validate() &&
                       formFieldPrice.formKeyPriceInput.currentState!
