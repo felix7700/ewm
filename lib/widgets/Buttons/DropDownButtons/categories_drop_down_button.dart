@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class CategoriesDropDownButton extends StatefulWidget {
   CategoriesDropDownButton(
       {required this.itemId,
-      required this.updateCategoryIdInItemDataFunction,
+      required this.onChangedFunction,
       required this.categoriesData,
       this.dropdownValue,
       Key? key})
@@ -14,7 +14,7 @@ class CategoriesDropDownButton extends StatefulWidget {
   List<String> categoriesAsList = [];
   final List<Map<String, dynamic>> categoriesData;
   final int itemId;
-  final Function updateCategoryIdInItemDataFunction;
+  final Function onChangedFunction;
 
   final DbManager dbManager = DbManager.instance;
 
@@ -54,8 +54,8 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
           () {
             widget.dropdownValue = newValue!;
             _indexAsCategoryId = widget.categoriesAsList.indexOf(newValue) + 1;
-            widget.updateCategoryIdInItemDataFunction(
-                itemId: widget.itemId, newCategoryId: _indexAsCategoryId);
+            widget.onChangedFunction(
+                itemId: widget.itemId, categoryIdValue: _indexAsCategoryId);
           },
         );
       },

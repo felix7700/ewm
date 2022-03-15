@@ -37,6 +37,11 @@ class AddNewItemCard extends StatelessWidget {
     );
   }
 
+  void _categoryOnChangedFunction(
+      {required int itemId, required int categoryIdValue}) {
+    debugPrint('categoryIdValue: $categoryIdValue');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -49,7 +54,7 @@ class AddNewItemCard extends StatelessWidget {
             children: <Widget>[
               CategoriesDropDownButton(
                 itemId: 1,
-                updateCategoryIdInItemDataFunction: _addItemToInventoryTable,
+                onChangedFunction: _categoryOnChangedFunction,
                 categoriesData: categoriesData,
               ),
               Form(

@@ -53,13 +53,13 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
   }
 
   void _updateItemCategory(
-      {required int itemId, required int newCategoryId}) async {
+      {required int itemId, required int categoryIdValue}) async {
     String _table = dbManager.inventoryTableName;
     String _columnToUpdate = dbManager.inventoryColumnNameCategoryId;
     String _inventoryColumnNameItemID = dbManager.inventoryColumnNameItemID;
     String _itemId = itemId.toString();
     String _queryString =
-        'UPDATE $_table SET $_columnToUpdate = $newCategoryId WHERE $_inventoryColumnNameItemID = $_itemId';
+        'UPDATE $_table SET $_columnToUpdate = $categoryIdValue WHERE $_inventoryColumnNameItemID = $_itemId';
     debugPrint('_queryString : ' + _queryString);
     var _resultErrorList = await dbManager.rawQuery(queryString: _queryString);
     if (_resultErrorList.isEmpty) {
@@ -133,7 +133,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               children: [
                 CategoriesDropDownButton(
                   itemId: itemData[dbManager.inventoryColumnNameItemID],
-                  updateCategoryIdInItemDataFunction: _updateItemCategory,
+                  onChangedFunction: _updateItemCategory,
                   categoriesData: categories,
                   dropdownValue: dropdownInitValue,
                 ),
