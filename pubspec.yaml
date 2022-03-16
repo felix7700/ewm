@@ -1,5 +1,5 @@
 name: ewm
-description: A new Flutter project.
+description: EWM 'Easy Warehouse Manager' is a SQFlite-Demo written by Felix Lehmann.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
