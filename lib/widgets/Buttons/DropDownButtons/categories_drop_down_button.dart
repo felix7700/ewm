@@ -7,7 +7,7 @@ class CategoriesDropDownButton extends StatefulWidget {
       {required this.itemId,
       required this.onChangedFunction,
       required this.categoriesData,
-      this.dropdownValue,
+      required this.dropdownValue,
       Key? key})
       : super(key: key);
   String? dropdownValue;
@@ -35,18 +35,18 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
               [widget.dbManager.categoriesColumnNameCategoryName]
           .toString());
     }
-    widget.dropdownValue ??= widget.categoriesAsList[0];
   }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
+      hint: const Text('Kategorie'),
       value: widget.dropdownValue,
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
       underline: Container(
-        height: 2,
+        height: 3,
         color: Colors.deepPurpleAccent,
       ),
       onChanged: (String? newValue) {

@@ -2,6 +2,7 @@ import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
 import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_name.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../Buttons/add_item_icon_button.dart';
 import '../DialogContent/InputCards/input_card_edit_item_count.dart';
 import '../DialogContent/InputCards/input_card_edit_item_price.dart';
@@ -256,12 +257,9 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
             child: Center(
-              child: Padding(
-                padding: _headlineCellsTextPaddingEdgeInsets,
-                child: Text(
-                  'Item-\nID',
-                  style: _headlineCellsTextStyle,
-                ),
+              child: Text(
+                'Item-\nID',
+                style: _headlineCellsTextStyle,
               ),
             ),
           ),
@@ -313,10 +311,18 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               ),
             ),
           ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.top,
+            child: Center(
+              child: Text(
+                'Delete-\nButton',
+                style: _headlineCellsTextStyle,
+              ),
+            ),
+          ),
         ],
       ),
     );
-    debugPrint('categoriesData: $categoriesDataAsList');
 
     for (int rowIndex = 0; rowIndex < inventoryData.length; rowIndex++) {
       String _categoryName = categoriesDataAsList[inventoryData[rowIndex]
@@ -324,6 +330,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           1][dbManager.categoriesColumnNameCategoryName];
       int _categoryIdAsInt =
           inventoryData[rowIndex][dbManager.inventoryColumnNameCategoryId];
+      int _itemIdAsInt =
+          inventoryData[rowIndex][dbManager.inventoryColumnNameItemID];
       String _itemName =
           inventoryData[rowIndex][dbManager.inventoryColumnNameItemName];
       String _itemPriceAsString = inventoryData[rowIndex]
@@ -407,11 +415,43 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                 ),
               ),
             ),
+            TableCell(
+              verticalAlignment: TableCellVerticalAlignment.top,
+              child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: Center(
+                  child: IconButton(
+                    onPressed: () {
+                      _deleteSelectedItemFromInventory(itemId: _itemIdAsInt);
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       );
     }
     return tableRows;
+  }
+
+  void _deleteAllItemsFromInventory() async {
+    int _result = await dbManager.deleteAllRows(
+        tableName: dbManager.inventoryTableName,
+        idColumnName: dbManager.inventoryColumnNameItemID);
+    debugPrint('_result: ' + _result.toString());
+    _loadData();
+  }
+
+  void _deleteSelectedItemFromInventory({required int itemId}) async {
+    int _result = await dbManager.deleteRow(
+        tableName: dbManager.inventoryTableName,
+        idColumnName: dbManager.inventoryColumnNameItemID,
+        id: itemId);
+    debugPrint('_result: ' + _result.toString());
+    _loadData();
   }
 
   @override
@@ -420,6 +460,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(_title),
+        actions: [
+          IconButton(
+            onPressed: _deleteAllItemsFromInventory,
+            icon: const Icon(Icons.delete),
+          )
+        ],
       ),
       body: FutureBuilder(
         future: _allData,
@@ -445,9 +491,10 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                     columnWidths: const <int, TableColumnWidth>{
                       0: IntrinsicColumnWidth(),
                       1: IntrinsicColumnWidth(),
-                      2: FlexColumnWidth(),
+                      2: IntrinsicColumnWidth(),
                       3: IntrinsicColumnWidth(),
                       4: IntrinsicColumnWidth(),
+                      5: IntrinsicColumnWidth(),
                     },
                   ),
                   AddItemIconButton(

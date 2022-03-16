@@ -18,7 +18,9 @@ class AddItemIconButton extends StatelessWidget {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Neuer Artikel'),
+        title: const Center(
+          child: Text('Neuer Artikel'),
+        ),
         content: AddNewItemCard(
           addItemToInvetoryAndRefreshDataOnDisplayFunction:
               addItemToInvetoryAndRefreshDataOnDisplayFunction,

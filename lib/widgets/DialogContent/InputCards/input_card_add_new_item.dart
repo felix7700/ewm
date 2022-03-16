@@ -1,7 +1,6 @@
 import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
 import 'package:flutter/material.dart';
-
 import '../../FormFields/form_field_price.dart';
 
 class AddNewItemCard extends StatelessWidget {
@@ -15,7 +14,7 @@ class AddNewItemCard extends StatelessWidget {
 
   final titleController = TextEditingController();
   final _formKeyTitleInput = GlobalKey<FormState>();
-  final FormFieldPrice formFieldPrice = FormFieldPrice();
+  final FormFieldPrice formFieldPrice = FormFieldPrice(autofocusValue: false);
 
   final DbManager _dbManager = DbManager.instance;
 
@@ -25,10 +24,10 @@ class AddNewItemCard extends StatelessWidget {
     Map<String, dynamic> _newItemDataRow = {
       // inventoryColumnNameItemID: >auto increment if insert a new row<,
       _dbManager.inventoryColumnNameCategoryId: 1,
-      _dbManager.inventoryColumnNameItemName: 'Deutsche Markenbutter',
+      _dbManager.inventoryColumnNameItemName: titleController.text,
       _dbManager.inventoryColumnNameItemPrice:
           formFieldPrice.priceController.text,
-      _dbManager.inventoryColumnNameItemCount: 1
+      _dbManager.inventoryColumnNameItemCount: 0
     };
 
     addItemToInvetoryAndRefreshDataOnDisplayFunction(
@@ -50,10 +49,13 @@ class AddNewItemCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              CategoriesDropDownButton(
-                itemId: 1,
-                onChangedFunction: _categoryOnChangedFunction,
-                categoriesData: categoriesData,
+              Center(
+                child: CategoriesDropDownButton(
+                  itemId: 0,
+                  onChangedFunction: _categoryOnChangedFunction,
+                  categoriesData: categoriesData,
+                  dropdownValue: null,
+                ),
               ),
               Form(
                 key: _formKeyTitleInput,

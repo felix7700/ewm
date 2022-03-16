@@ -55,7 +55,8 @@ class DbManager {
     debugPrint('_onCreate');
     _createExampleTableData = true;
 
-    await db.execute('''
+    await db.execute(
+        '''
           CREATE TABLE $inventoryTableName (
             $inventoryColumnNameItemID INTEGER NOT NULL UNIQUE,
             $inventoryColumnNameCategoryId INTEGER NOT NULL,
@@ -66,7 +67,8 @@ class DbManager {
           )
           ''');
 
-    await db.execute('''
+    await db.execute(
+        '''
             CREATE TABLE $categoriesTableName (
               $categoriesColumnNameCategoryID INTEGER NOT NULL UNIQUE,
               $categoriesColumnNameCategoryName TEXT NOT NULL UNIQUE,
@@ -219,22 +221,26 @@ class DbManager {
         where: '$whereColumnIdName = ?', whereArgs: [id]);
   }
 
-  Future<int> deleteRow({required String tableName, required int id}) async {
+  Future<int> deleteRow(
+      {required String tableName,
+      required String idColumnName,
+      required int id}) async {
     debugPrint('deleteRow()');
     Database db = await instance.database;
     return await db
-        .delete(inventoryTableName, where: '$tableName = ?', whereArgs: [id]);
+        .delete(tableName, where: '$idColumnName = ?', whereArgs: [id]);
   }
 
-  Future<int> deleteAllRows({required String tableName}) async {
+  Future<int> deleteAllRows(
+      {required String tableName, required String idColumnName}) async {
     debugPrint('\ndeleteAllRows()');
     Database db = await instance.database;
     int? tableExists = 0;
 
-    await isTableExists(tableName: tableName);
-    if (tableExists > 0) {
-      return await db.rawDelete(
-          'DELETE FROM $categoriesTableName WHERE $categoriesColumnNameCategoryID > 0');
+    tableExists = await isTableExists(tableName: tableName);
+    if (tableExists! > 0) {
+      return await db
+          .rawDelete('DELETE FROM $tableName WHERE $idColumnName > 0');
     } else {
       return -1;
     }
@@ -244,7 +250,8 @@ class DbManager {
   void createTable({required String tableName}) async {
     debugPrint('createTable');
     Database db = await instance.database;
-    await db.execute('''
+    await db.execute(
+        '''
           CREATE TABLE $inventoryTableName (
             $tableName INTEGER PRIMARY KEY,
             $inventoryColumnNameCategoryId TEXT NOT NULL,

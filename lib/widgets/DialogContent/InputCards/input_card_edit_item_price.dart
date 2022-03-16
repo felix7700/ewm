@@ -11,7 +11,7 @@ class InputCardEditItemPrice extends StatelessWidget {
   final Function updateItemPriceinSqliteDB;
   final int itemId;
   final double editItemPriceTextFieldInitValue;
-  final FormFieldPrice formFieldPrice = FormFieldPrice();
+  final FormFieldPrice formFieldPrice = FormFieldPrice(autofocusValue: true);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,6 @@ class InputCardEditItemPrice extends StatelessWidget {
                   style: TextStyle(color: Colors.purple),
                 ),
                 onPressed: () {
-                  String value = formFieldPrice.priceController.text;
                   if (formFieldPrice.formKeyPriceInput.currentState!
                       .validate()) {
                     debugPrint('submitData()');

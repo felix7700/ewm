@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
 class FormFieldPrice extends StatelessWidget {
-  FormFieldPrice({Key? key}) : super(key: key);
+  FormFieldPrice({required this.autofocusValue, Key? key}) : super(key: key);
 
   final TextEditingController priceController = TextEditingController();
   final GlobalKey<FormState> formKeyPriceInput = GlobalKey<FormState>();
+  final bool? autofocusValue;
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: formKeyPriceInput,
       child: TextFormField(
-        autofocus: true,
+        autofocus: autofocusValue ?? false,
         decoration: const InputDecoration(labelText: 'Preis'),
         controller: priceController,
         keyboardType: TextInputType.datetime,
