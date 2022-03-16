@@ -1,4 +1,3 @@
-import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/DialogContent/InputCards/input_card_add_new_item.dart';
 import 'package:flutter/material.dart';
 

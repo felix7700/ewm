@@ -329,9 +329,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
           const TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
             child: Center(
-              child: Text(
-                'Delete-\nButton',
-                style: _headlineCellsTextStyle,
+              child: Padding(
+                padding: _headlineCellsTextPaddingEdgeInsets,
+                child: Text(
+                  'Delete-\nButton',
+                  style: _headlineCellsTextStyle,
+                ),
               ),
             ),
           ),
@@ -512,7 +515,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                       2: FlexColumnWidth(),
                       3: FixedColumnWidth(64),
                       4: FixedColumnWidth(64),
-                      5: FixedColumnWidth(48),
+                      5: FixedColumnWidth(56),
                     },
                   ),
                   Expanded(
@@ -527,7 +530,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                             2: FlexColumnWidth(),
                             3: FixedColumnWidth(64),
                             4: FixedColumnWidth(64),
-                            5: FixedColumnWidth(48),
+                            5: FixedColumnWidth(56),
                           },
                         ),
                       ],
