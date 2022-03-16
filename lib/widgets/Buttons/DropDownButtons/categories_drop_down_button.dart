@@ -24,8 +24,7 @@ class CategoriesDropDownButton extends StatefulWidget {
 }
 
 class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
-  int _indexAsCategoryId = 0;
-  final DbManager _dbManager = DbManager.instance;
+  int _indexAsCategoryIdAsInt = 0;
 
   @override
   void initState() {
@@ -53,9 +52,11 @@ class _CategoriesDropDownButtonState extends State<CategoriesDropDownButton> {
         setState(
           () {
             widget.dropdownValue = newValue!;
-            _indexAsCategoryId = widget.categoriesAsList.indexOf(newValue) + 1;
+            _indexAsCategoryIdAsInt =
+                widget.categoriesAsList.indexOf(newValue) + 1;
             widget.onChangedFunction(
-                itemId: widget.itemId, categoryIdValue: _indexAsCategoryId);
+                itemId: widget.itemId,
+                categoryIdValue: _indexAsCategoryIdAsInt);
           },
         );
       },

@@ -3,7 +3,7 @@ import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.
 import 'package:flutter/material.dart';
 import '../../FormFields/form_field_price.dart';
 
-class AddNewItemCard extends StatelessWidget {
+class AddNewItemCard extends StatefulWidget {
   AddNewItemCard(
       {Key? key,
       required this.addItemToInvetoryAndRefreshDataOnDisplayFunction,
@@ -12,31 +12,52 @@ class AddNewItemCard extends StatelessWidget {
   final Function addItemToInvetoryAndRefreshDataOnDisplayFunction;
   List<Map<String, dynamic>> categoriesData;
 
+  @override
+  State<AddNewItemCard> createState() => _AddNewItemCardState();
+}
+
+class _AddNewItemCardState extends State<AddNewItemCard> {
   final titleController = TextEditingController();
   final _formKeyTitleInput = GlobalKey<FormState>();
   final FormFieldPrice formFieldPrice = FormFieldPrice(autofocusValue: false);
-
   final DbManager _dbManager = DbManager.instance;
+  final String _errorMessageChooseACategory = '';
+  int? _selectedCategoryId = 0;
 
   void _addItemToInvetoryAndRefreshDataOnDisplayFunction() async {
     debugPrint('_addItemToInventoryTable');
 
+    if (_selectedCategoryId == 0) {
+      //  setState(() {
+      //   _errorMessageChooseACategory = 'Bitte eine Kategorie wählen!';
+      // });
+      return null;
+    } // ToDO: if category null show _errorMessageChooseACategory
+
     Map<String, dynamic> _newItemDataRow = {
       // inventoryColumnNameItemID: >auto increment if insert a new row<,
-      _dbManager.inventoryColumnNameCategoryId: 1,
+      _dbManager.inventoryColumnNameCategoryId: _selectedCategoryId,
       _dbManager.inventoryColumnNameItemName: titleController.text,
       _dbManager.inventoryColumnNameItemPrice:
           formFieldPrice.priceController.text,
       _dbManager.inventoryColumnNameItemCount: 0
     };
 
-    addItemToInvetoryAndRefreshDataOnDisplayFunction(
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Artikel wurde hinzugefügt'),
+      ),
+    );
+
+    widget.addItemToInvetoryAndRefreshDataOnDisplayFunction(
         newItemdataRow: _newItemDataRow);
   }
 
   void _categoryOnChangedFunction(
-      {required int itemId, required int categoryIdValue}) {
-    debugPrint('categoryIdValue: $categoryIdValue');
+      {required int itemId, required dynamic categoryIdValue}) {
+    debugPrint(
+        '_categoryOnChangedFunction   itemId: $itemId   categoryIdValue: $categoryIdValue');
+    _selectedCategoryId = categoryIdValue;
   }
 
   @override
@@ -50,10 +71,13 @@ class AddNewItemCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Center(
+                child: Text(_errorMessageChooseACategory),
+              ),
+              Center(
                 child: CategoriesDropDownButton(
                   itemId: 0,
                   onChangedFunction: _categoryOnChangedFunction,
-                  categoriesData: categoriesData,
+                  categoriesData: widget.categoriesData,
                   dropdownValue: null,
                 ),
               ),
@@ -91,15 +115,6 @@ class AddNewItemCard extends StatelessWidget {
                           .validate()) {
                     debugPrint('submitData()');
                     _addItemToInvetoryAndRefreshDataOnDisplayFunction();
-                  }
-                  if (_formKeyTitleInput.currentState!.validate() &&
-                      formFieldPrice.formKeyPriceInput.currentState!
-                          .validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Artikel wurde hinzugefügt'),
-                      ),
-                    );
                   }
                 },
               ),
