@@ -34,7 +34,10 @@ class AddItemIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () => _showDialog(context),
-      icon: const Icon(Icons.add),
+      icon: const Icon(
+        Icons.add_circle,
+        color: Colors.blueGrey,
+      ),
     );
   }
 }
