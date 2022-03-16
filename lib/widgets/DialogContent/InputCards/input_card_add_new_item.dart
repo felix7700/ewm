@@ -21,18 +21,10 @@ class _AddNewItemCardState extends State<AddNewItemCard> {
   final _formKeyTitleInput = GlobalKey<FormState>();
   final FormFieldPrice formFieldPrice = FormFieldPrice(autofocusValue: false);
   final DbManager _dbManager = DbManager.instance;
-  final String _errorMessageChooseACategory = '';
-  int? _selectedCategoryId = 0;
+  int? _selectedCategoryId = 1;
 
   void _addItemToInvetoryAndRefreshDataOnDisplayFunction() async {
     debugPrint('_addItemToInventoryTable');
-
-    if (_selectedCategoryId == 0) {
-      //  setState(() {
-      //   _errorMessageChooseACategory = 'Bitte eine Kategorie wählen!';
-      // });
-      return null;
-    } // ToDO: if category null show _errorMessageChooseACategory
 
     Map<String, dynamic> _newItemDataRow = {
       // inventoryColumnNameItemID: >auto increment if insert a new row<,
@@ -70,15 +62,16 @@ class _AddNewItemCardState extends State<AddNewItemCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              Center(
-                child: Text(_errorMessageChooseACategory),
+              const Center(
+                child: Text('Kategorie:'),
               ),
               Center(
                 child: CategoriesDropDownButton(
                   itemId: 0,
                   onChangedFunction: _categoryOnChangedFunction,
                   categoriesData: widget.categoriesData,
-                  dropdownValue: null,
+                  dropdownValue: widget.categoriesData[0]
+                      [_dbManager.categoriesColumnNameCategoryName],
                 ),
               ),
               Form(
@@ -94,7 +87,7 @@ class _AddNewItemCardState extends State<AddNewItemCard> {
                         if (value!.isEmpty) {
                           return 'Bitte einen Artikelnamen eingeben!';
                         }
-                        if (value.length > 20) {
+                        if (value.length > 30) {
                           return 'Maximal 20 Zeichen!';
                         }
                         return null;

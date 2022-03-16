@@ -240,9 +240,10 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     );
   }
 
-  List<TableRow> _getTableRows(
+  List<List<TableRow>> _getTableRows(
       {required List<Map<String, dynamic>> categoriesDataAsList,
       required List<Map<String, dynamic>> inventoryData}) {
+    final List<TableRow> tableRowHeadline = [];
     final List<TableRow> tableRows = [];
 
     const TextStyle _headlineCellsTextStyle = TextStyle(
@@ -251,31 +252,45 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     const TextStyle _cellTextStyle = TextStyle(
         fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal);
 
-    tableRows.add(
-      const TableRow(
+    tableRowHeadline.add(
+      TableRow(
         children: [
-          TableCell(
+          const TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
-            child: Center(
-              child: Text(
-                'Item-\nID',
-                style: _headlineCellsTextStyle,
-              ),
-            ),
-          ),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.top,
-            child: Center(
-              child: Padding(
-                padding: _headlineCellsTextPaddingEdgeInsets,
+            child: Padding(
+              padding: _headlineCellsTextPaddingEdgeInsets,
+              child: Center(
                 child: Text(
-                  'Kategorie',
+                  'Item-\nID',
                   style: _headlineCellsTextStyle,
                 ),
               ),
             ),
           ),
           TableCell(
+            verticalAlignment: TableCellVerticalAlignment.top,
+            child: Center(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+                    child: Text(
+                      'Kategorie',
+                      style: _headlineCellsTextStyle,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      debugPrint('add new category');
+                    },
+                    icon: const Icon(Icons.add),
+                    constraints: const BoxConstraints(),
+                  )
+                ],
+              ),
+            ),
+          ),
+          const TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
             child: Center(
               child: Padding(
@@ -287,7 +302,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               ),
             ),
           ),
-          TableCell(
+          const TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
             child: Center(
               child: Padding(
@@ -299,7 +314,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               ),
             ),
           ),
-          TableCell(
+          const TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
             child: Center(
               child: Padding(
@@ -311,7 +326,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               ),
             ),
           ),
-          TableCell(
+          const TableCell(
             verticalAlignment: TableCellVerticalAlignment.top,
             child: Center(
               child: Text(
@@ -434,7 +449,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
         ),
       );
     }
-    return tableRows;
+    return [tableRowHeadline, tableRows];
   }
 
   void _deleteAllItemsFromInventory() async {
@@ -478,24 +493,45 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                 _allDataFromAllTables[0];
             List<Map<String, dynamic>> _inventoryData =
                 _allDataFromAllTables[1];
+            final List<TableRow> tableRowHeadline = _getTableRows(
+                categoriesDataAsList: _categoriesData,
+                inventoryData: _inventoryData)[0];
             final List<TableRow> tableRows = _getTableRows(
                 categoriesDataAsList: _categoriesData,
-                inventoryData: _inventoryData);
+                inventoryData: _inventoryData)[1];
             widget = Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView(
+              child: Column(
                 children: [
                   Table(
-                    children: tableRows,
+                    children: tableRowHeadline,
                     border: TableBorder.all(),
                     columnWidths: const <int, TableColumnWidth>{
-                      0: IntrinsicColumnWidth(),
-                      1: IntrinsicColumnWidth(),
-                      2: IntrinsicColumnWidth(),
-                      3: IntrinsicColumnWidth(),
-                      4: IntrinsicColumnWidth(),
-                      5: IntrinsicColumnWidth(),
+                      0: FixedColumnWidth(48),
+                      1: FixedColumnWidth(72),
+                      2: FlexColumnWidth(),
+                      3: FixedColumnWidth(64),
+                      4: FixedColumnWidth(64),
+                      5: FixedColumnWidth(48),
                     },
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Table(
+                          children: tableRows,
+                          border: TableBorder.all(),
+                          columnWidths: const <int, TableColumnWidth>{
+                            0: FixedColumnWidth(48),
+                            1: FixedColumnWidth(72),
+                            2: FlexColumnWidth(),
+                            3: FixedColumnWidth(64),
+                            4: FixedColumnWidth(64),
+                            5: FixedColumnWidth(48),
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   AddItemIconButton(
                     addItemToInvetoryAndRefreshDataOnDisplayFunction:
