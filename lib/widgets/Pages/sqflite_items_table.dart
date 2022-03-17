@@ -2,7 +2,6 @@ import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
 import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_name.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import '../Buttons/add_item_icon_button.dart';
 import '../DialogContent/InputCards/input_card_edit_item_count.dart';
 import '../DialogContent/InputCards/input_card_edit_item_price.dart';
@@ -261,7 +260,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               padding: _headlineCellsTextPaddingEdgeInsets,
               child: Center(
                 child: Text(
-                  'Item-\nID',
+                  'ID',
                   style: _headlineCellsTextStyle,
                 ),
               ),
@@ -332,7 +331,8 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               child: Padding(
                 padding: _headlineCellsTextPaddingEdgeInsets,
                 child: Text(
-                  'Delete-\nButton',
+                  '',
+                  // 'Delete-\nButton',
                   style: _headlineCellsTextStyle,
                 ),
               ),
@@ -346,8 +346,6 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
       String _categoryName = categoriesDataAsList[inventoryData[rowIndex]
               [dbManager.inventoryColumnNameCategoryId] -
           1][dbManager.categoriesColumnNameCategoryName];
-      int _categoryIdAsInt =
-          inventoryData[rowIndex][dbManager.inventoryColumnNameCategoryId];
       int _itemIdAsInt =
           inventoryData[rowIndex][dbManager.inventoryColumnNameItemID];
       String _itemName =
@@ -435,17 +433,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
             ),
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.top,
-              child: SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: Center(
-                  child: IconButton(
-                    onPressed: () {
-                      _deleteSelectedItemFromInventory(itemId: _itemIdAsInt);
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                ),
+              child: IconButton(
+                onPressed: () {
+                  _deleteSelectedItemFromInventory(itemId: _itemIdAsInt);
+                },
+                icon: const Icon(Icons.delete),
+                constraints: const BoxConstraints(),
               ),
             ),
           ],
@@ -510,12 +503,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                     children: tableRowHeadline,
                     border: TableBorder.all(),
                     columnWidths: const <int, TableColumnWidth>{
-                      0: FixedColumnWidth(48),
-                      1: FixedColumnWidth(72),
-                      2: FlexColumnWidth(),
-                      3: FixedColumnWidth(64),
-                      4: FixedColumnWidth(64),
-                      5: FixedColumnWidth(56),
+                      0: FixedColumnWidth(32),
+                      1: FlexColumnWidth(),
+                      2: FlexColumnWidth(1.5),
+                      3: FlexColumnWidth(),
+                      4: FixedColumnWidth(68),
+                      5: FixedColumnWidth(32),
                     },
                   ),
                   Expanded(
@@ -525,12 +518,12 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                           children: tableRows,
                           border: TableBorder.all(),
                           columnWidths: const <int, TableColumnWidth>{
-                            0: FixedColumnWidth(48),
-                            1: FixedColumnWidth(72),
-                            2: FlexColumnWidth(),
-                            3: FixedColumnWidth(64),
-                            4: FixedColumnWidth(64),
-                            5: FixedColumnWidth(56),
+                            0: FixedColumnWidth(32),
+                            1: FlexColumnWidth(),
+                            2: FlexColumnWidth(1.5),
+                            3: FlexColumnWidth(),
+                            4: FixedColumnWidth(68),
+                            5: FixedColumnWidth(32),
                           },
                         ),
                       ],
