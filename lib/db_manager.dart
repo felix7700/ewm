@@ -55,8 +55,7 @@ class DbManager {
     debugPrint('_onCreate');
     _createExampleTableData = true;
 
-    await db.execute(
-        '''
+    await db.execute('''
           CREATE TABLE $inventoryTableName (
             $inventoryColumnNameItemID INTEGER NOT NULL UNIQUE,
             $inventoryColumnNameCategoryId INTEGER NOT NULL,
@@ -67,8 +66,7 @@ class DbManager {
           )
           ''');
 
-    await db.execute(
-        '''
+    await db.execute('''
             CREATE TABLE $categoriesTableName (
               $categoriesColumnNameCategoryID INTEGER NOT NULL UNIQUE,
               $categoriesColumnNameCategoryName TEXT NOT NULL UNIQUE,
@@ -144,12 +142,18 @@ class DbManager {
       {required String tableName, required Map<String, dynamic> row}) async {
     debugPrint('queryAllRows');
     Database db = await instance.database;
+    int? _resultId;
     try {
-      return await db.insert(tableName, row);
+      _resultId = await db.insert(tableName, row);
     } catch (error) {
+      // if error contains 'UNIQUE constraint failed', it´s no error, because id its auto increment, when value is null
       debugPrint('insertIntoTable errorCode : ' + error.toString());
+      if (error.toString().contains('UNIQUE constraint failed')) {
+        return 0;
+      }
       return -1;
     }
+    return _resultId;
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(
@@ -250,8 +254,7 @@ class DbManager {
   void createTable({required String tableName}) async {
     debugPrint('createTable');
     Database db = await instance.database;
-    await db.execute(
-        '''
+    await db.execute('''
           CREATE TABLE $inventoryTableName (
             $tableName INTEGER PRIMARY KEY,
             $inventoryColumnNameCategoryId TEXT NOT NULL,

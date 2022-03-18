@@ -1,3 +1,4 @@
+import 'package:ewm/db_manager.dart';
 import 'package:flutter/material.dart';
 
 class AddNewCategoryCard extends StatelessWidget {
@@ -41,13 +42,22 @@ class AddNewCategoryCard extends StatelessWidget {
                 ),
               ),
               TextButton(
-                child: const Text('Kategorie hinzufügen',
-                    style: TextStyle(color: Colors.purple)),
+                child: const Text(
+                  'Kategorie hinzufügen',
+                  style: TextStyle(color: Colors.purple),
+                ),
                 onPressed: () {
                   if (_formKeyCategoryNameInput.currentState!.validate()) {
                     debugPrint('submitData()');
-                    addNewCategoryFunction(
-                        categoryNameTextEditingController.text);
+                    DbManager dbManager = DbManager.instance;
+                    Map<String, dynamic> newCategoryRow = {
+                      dbManager.categoriesColumnNameCategoryName:
+                          categoryNameTextEditingController.text
+                    };
+                    debugPrint(
+                        'send addNewCategoryFunction(newCategoryRow):   ' +
+                            newCategoryRow.toString());
+                    addNewCategoryFunction(newCategoryRow: newCategoryRow);
                     Navigator.of(context).pop();
                   }
                   if (_formKeyCategoryNameInput.currentState!.validate()) {

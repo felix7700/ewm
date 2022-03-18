@@ -1,5 +1,6 @@
 import 'package:ewm/db_manager.dart';
 import 'package:ewm/widgets/Buttons/DropDownButtons/categories_drop_down_button.dart';
+import 'package:ewm/widgets/DialogContent/InputCards/input_card_add_new_category.dart';
 import 'package:ewm/widgets/DialogContent/InputCards/input_card_edit_item_name.dart';
 import 'package:flutter/material.dart';
 import '../Buttons/add_item_icon_button.dart';
@@ -44,7 +45,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
         tableName: dbManager.inventoryTableName, row: newItemdataRow);
     debugPrint('_resultErrorNumber: $_resultErrorNumber');
 
-    if (_resultErrorNumber > 0) {
+    if (_resultErrorNumber >= 0) {
       _loadData();
     } else {
       _showErrorDialog(context, _resultErrorNumber.toString());
@@ -57,6 +58,21 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
     debugPrint('_loadDataAndCloseDialog');
     _loadData();
     Navigator.of(context).pop();
+  }
+
+  void _addNewCategoy({required Map<String, dynamic> newCategoryRow}) async {
+    debugPrint('_addNewCategoy');
+    debugPrint('newCategoryRow : ' + newCategoryRow.toString());
+
+    int? _resultErrorNumber = await dbManager.insertIntoTable(
+        tableName: dbManager.categoriesTableName, row: newCategoryRow);
+    debugPrint('_resultErrorNumber: $_resultErrorNumber');
+
+    if (_resultErrorNumber >= 0) {
+      _loadData();
+    } else {
+      _showErrorDialog(context, _resultErrorNumber.toString());
+    }
   }
 
   Future<String?> _showErrorDialog(BuildContext context, String errorText) {
@@ -164,6 +180,18 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Future<String?> _showAddNewCategoryDialog() {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Neue Kategorie:'),
+        content: AddNewCategoryCard(
+          addNewCategoryFunction: _addNewCategoy,
         ),
       ),
     );
@@ -280,7 +308,7 @@ class _SqfliteItemsTablePageState extends State<SqfliteItemsTablePage> {
                   ),
                   IconButton(
                     onPressed: () {
-                      debugPrint('add new category');
+                      _showAddNewCategoryDialog();
                     },
                     icon: const Icon(Icons.add),
                     constraints: const BoxConstraints(),
